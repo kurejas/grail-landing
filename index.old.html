@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appearance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; background: #fff; font-family: 'Manrope', sans-serif; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; padding: 0; }
+
+    /* ── Header ── */
+    .header {
+      position: fixed; top: 0; left: 0; right: 0; height: 96px;
+      background: #fff; border-bottom: 1px solid #ebebeb;
+      box-shadow: 0px 1px 2px 0px rgba(187,187,187,0.12);
+      z-index: 100;
+      display: flex; align-items: center;
+      padding: 0 32px;
+    }
+    .btn-back {
+      display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .btn-back__label {
+      font-weight: 500; font-size: 16px; color: #5c5c5c;
+      letter-spacing: 0.15px; line-height: 1.6; white-space: nowrap;
+    }
+
+    /* Step progress */
+    .steps {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 723px; height: 44px;
+    }
+    .steps__track {
+      position: absolute; top: 0; left: 5px; right: 5px; height: 12px;
+    }
+    .steps__rail {
+      position: absolute; top: calc(50% + 1px); left: 0; right: 0;
+      height: 4px; background: #f9f9f9; border-radius: 12px; transform: translateY(-50%);
+    }
+    .steps__progress {
+      position: absolute; top: calc(50% + 1px); left: 0;
+      width: 1px; height: 4px; background: #090604; border-radius: 12px; transform: translateY(-50%);
+    }
+    .steps__thumb {
+      position: absolute; left: calc(50% - 312px); top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px; height: 12px; background: #090604; border-radius: 20px; overflow: hidden;
+    }
+    .steps__thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .steps__labels {
+      position: absolute; top: 20px; left: 5px; right: 5px;
+      display: flex; justify-content: space-between;
+      font-size: 16px; font-weight: 600; line-height: 24px;
+    }
+    .steps__label { color: #707070; flex-shrink: 0; }
+    .steps__label--active { color: #090604; }
+
+    /* Next button */
+    .btn-next {
+      margin-left: auto; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: #090604; border-radius: 8px;
+      padding: 10px 24px; width: 203px;
+      font-weight: 600; font-size: 18px; color: #fff; line-height: 28px; white-space: nowrap;
+    }
+
+    /* ── Main ── */
+    .main {
+      padding-top: 136px; padding-bottom: 50px;
+      display: flex; flex-direction: column; align-items: center; gap: 52px;
+    }
+    .title {
+      font-weight: 700; font-size: 28px;
+      letter-spacing: -0.56px; color: #090604; text-align: center;
+    }
+    .content {
+      display: flex; flex-direction: column; gap: 24px; width: 900px;
+    }
+
+    /* ── Video player ── */
+    .player {
+      position: relative; width: 100%;
+      aspect-ratio: 900 / 506.939;
+      background: #000; border-radius: 15.869px; overflow: hidden;
+    }
+    .player__cover {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .player__hoverzone {
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity 150ms ease-in-out;
+    }
+    .player:hover .player__hoverzone { opacity: 1; }
+    .player__overlay {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 109.102px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.31) 51.563%, rgba(0,0,0,0.7) 100%);
+    }
+    .player__controls {
+      position: absolute; bottom: 19.84px; left: 7.93px; right: 7.93px; height: 43.641px;
+    }
+    .player__actions {
+      position: absolute; bottom: 15.87px; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .player__left, .player__right { display: flex; align-items: center; gap: 7.935px; }
+    .player__btn {
+      position: relative; width: 39.673px; height: 39.673px; flex-shrink: 0;
+    }
+    .player__btn-icon {
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 19.837px; height: 19.837px; overflow: clip;
+    }
+    .player__btn-icon img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .player__time { font-family: Arial, sans-serif; font-size: 13.89px; color: #fff; white-space: nowrap; }
+    .player__timeline {
+      position: absolute; bottom: -3.97px; left: 11.9px; right: 11.9px; height: 11.902px; border-radius: 4px;
+    }
+    .player__timeline-bar {
+      position: absolute; top: 50%; left: 0; right: 0;
+      height: 3.967px; background: rgba(255,255,255,0.7);
+      border-radius: 4px; transform: translateY(-50%);
+    }
+    .player__timeline-knot {
+      position: absolute; top: 50%; right: 77.36px;
+      transform: translate(50%, -50%); width: 11.902px; height: 11.902px;
+    }
+    .player__timeline-knot img { width: 100%; height: 100%; }
+
+    /* ── Tips ── */
+    .tips {
+      background: #ddf1ff; padding: 24px; border-radius: 10px; width: 100%;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .tips__row { display: flex; align-items: flex-start; }
+    .tip { display: flex; align-items: center; gap: 8px; width: 50%; }
+    .tip__icon { flex-shrink: 0; }
+    .tip p { font-weight: 500; font-size: 16px; color: #1d1d1d; letter-spacing: -0.32px; line-height: 1.5; }
+    .tip strong { font-weight: 700; }
+
+    /* ── Tablet (600–1024px) ── */
+    @media (max-width: 1024px) {
+      .header { padding: 0 32px; }
+      .steps { width: 400px; }
+      .steps__thumb { left: calc(50% - 197px); }
+      .btn-next { width: 143px; }
+      .content { width: 100%; padding: 0 50px; }
+      .title { font-size: 28px; }
+    }
+
+    /* ── Mobile (<600px) ── */
+    @media (max-width: 599px) {
+      .header { padding: 0 22px 0 22px; }
+      .steps { display: none; }
+      .btn-next { width: 143px; }
+      .main { padding-top: 136px; gap: 20px; }
+      .content { width: 100%; padding: 0 30px; }
+      .title { font-size: 20px; letter-spacing: -0.4px; }
+      .tips__row { flex-direction: column; gap: 8px; }
+      .tip { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const imgPlay   = "assets/play.svg";
+    const imgVolume = "assets/volume.svg";
+    const imgKnot   = "assets/knot.svg";
+    const imgFullsc = "assets/fullscreen.svg";
+    const imgCheck  = "assets/check.svg";
+    const imgBack   = "assets/back.svg";
+    const imgSlider = "assets/slider.svg";
+    const imgArrow  = "assets/arrow.svg";
+    const imgPoster = "assets/poster.jpg";
+
+    const steps = ["Instructions", "Submit footage", "Consent"];
+
+    const tips = [
+      ["Keep your ", <strong key="b">face visible</strong>, " at all times"],
+      ["Record in a ", <strong key="b">quiet, well lit environment</strong>],
+      ["Look directly ", <strong key="b">into the camera</strong>],
+      ["Make sure to ", <strong key="b">pause between sentences</strong>, " with your ", <strong key="b2">mouth closed</strong>],
+    ];
+
+    function CheckIcon() {
+      return <img src={imgCheck} alt="" style={{ flexShrink: 0, width: 16, height: 16 }} />;
+    }
+
+    const { useState, useRef, useEffect } = React;
+
+    function Appearance({ currentStep = 0, onBack, onNext }) {
+      const videoRef = useRef(null);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [isMuted, setIsMuted] = useState(false);
+      const [currentTime, setCurrentTime] = useState(0);
+      const [duration, setDuration] = useState(0);
+
+      useEffect(() => {
+        const v = videoRef.current;
+        if (!v) return;
+        const onPlay  = () => setIsPlaying(true);
+        const onPause = () => setIsPlaying(false);
+        v.addEventListener("play", onPlay);
+        v.addEventListener("pause", onPause);
+        return () => {
+          v.removeEventListener("play", onPlay);
+          v.removeEventListener("pause", onPause);
+        };
+      }, []);
+
+      const togglePlay = () => {
+        const v = videoRef.current;
+        if (!v) return;
+        v.paused ? v.play() : v.pause();
+      };
+
+      const toggleMute = () => {
+        const v = videoRef.current;
+        if (!v) return;
+        v.muted = !v.muted;
+        setIsMuted(v.muted);
+      };
+
+      const fmt = (s) => {
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return m + ":" + String(sec).padStart(2, "0");
+      };
+
+      const progress = duration ? (currentTime / duration) * 100 : 0;
+
+      return (
+        <div>
+          {/* Header */}
+          <header className="header">
+            <button className="btn-back" onClick={onBack}>
+              <img src={imgBack} alt="back" style={{ width: 20, height: 20, flexShrink: 0 }} />
+              <span className="btn-back__label">Workspace</span>
+            </button>
+
+            <div className="steps">
+              <div className="steps__track">
+                <div className="steps__rail" />
+                <div className="steps__progress" />
+                <div className="steps__thumb">
+                  <img src={imgSlider} alt="" style={{ width: "100%", height: "100%" }} />
+                </div>
+              </div>
+              <div className="steps__labels">
+                {steps.map((s, i) => (
+                  <span key={s} className={"steps__label" + (i === currentStep ? " steps__label--active" : "")}>{s}</span>
+                ))}
+              </div>
+            </div>
+
+            <button className="btn-next" onClick={onNext}>
+              Next
+              <img src={imgArrow} alt="" style={{ width: 20, height: 20, flexShrink: 0 }} />
+            </button>
+          </header>
+
+          {/* Main */}
+          <main className="main">
+            <h1 className="title">How to create a great Avatar?</h1>
+
+            <div className="content">
+              {/* Video player */}
+              <div className="player">
+                <video
+                  ref={videoRef}
+                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                  poster={imgPoster}
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", borderRadius: 15.869 }}
+                  onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
+                  onLoadedMetadata={(e) => setDuration(e.target.duration)}
+                  onEnded={() => setIsPlaying(false)}
+                />
+                <div className="player__hoverzone">
+                <div className="player__overlay" />
+                <div className="player__controls">
+                  <div className="player__actions">
+                    <div className="player__left">
+                      <button className="player__btn" onClick={togglePlay}>
+                        <span className="player__btn-icon">
+                          {isPlaying ? (
+                            <svg viewBox="0 0 20 20" fill="white" style={{ width: "100%", height: "100%" }}>
+                              <rect x="3" y="2" width="5" height="16" rx="1.5" />
+                              <rect x="12" y="2" width="5" height="16" rx="1.5" />
+                            </svg>
+                          ) : (
+                            <img src={imgPlay} alt="play" style={{ display: "block", maxWidth: "none", width: "100%", height: "100%" }} />
+                          )}
+                        </span>
+                      </button>
+                      <span className="player__time">{fmt(currentTime)} / {fmt(duration)}</span>
+                    </div>
+                    <div className="player__right">
+                      <button className="player__btn" onClick={toggleMute}>
+                        <span className="player__btn-icon">
+                          {isMuted ? (
+                            <svg viewBox="0 0 20 20" fill="white" style={{ width: "100%", height: "100%" }}>
+                              <path d="M3 7v6h4l5 5V2L7 7H3z" />
+                              <line x1="14" y1="7" x2="19" y2="13" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                              <line x1="19" y1="7" x2="14" y2="13" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                          ) : (
+                            <img src={imgVolume} alt="volume" style={{ display: "block", maxWidth: "none", width: "100%", height: "100%" }} />
+                          )}
+                        </span>
+                      </button>
+                      <button className="player__btn" onClick={() => {
+                        const v = videoRef.current;
+                        if (!v) return;
+                        if (v.requestFullscreen) v.requestFullscreen();
+                        else if (v.webkitRequestFullscreen) v.webkitRequestFullscreen();
+                      }}>
+                        <span className="player__btn-icon"><img src={imgFullsc} alt="fullscreen" /></span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="player__timeline" style={{ cursor: "pointer" }} onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const ratio = (e.clientX - rect.left) / rect.width;
+                    const v = videoRef.current;
+                    if (v && duration) { v.currentTime = ratio * duration; }
+                  }}>
+                    <div className="player__timeline-bar" style={{ background: "rgba(255,255,255,0.3)" }} />
+                    <div style={{ position: "absolute", top: "50%", left: 0, width: progress + "%", height: 3.967, background: "rgba(255,255,255,0.7)", borderRadius: 4, transform: "translateY(-50%)" }} />
+                    <div className="player__timeline-knot" style={{ right: "auto", left: `calc(${progress}% - 6px)` }}>
+                      <img src={imgKnot} alt="" />
+                    </div>
+                  </div>
+                </div>
+                </div>
+              </div>
+
+              {/* Tips */}
+              <div className="tips">
+                <div className="tips__row">
+                  {tips.slice(0, 2).map((tip, i) => (
+                    <div key={i} className="tip"><CheckIcon /><p>{tip}</p></div>
+                  ))}
+                </div>
+                <div className="tips__row">
+                  {tips.slice(2).map((tip, i) => (
+                    <div key={i} className="tip"><CheckIcon /><p>{tip}</p></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<Appearance currentStep={0} onBack={() => alert("Back")} onNext={() => alert("Next")} />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Keep the signup log and stray working files out of the web root.
+<FilesMatch "\.(log|old\.html|bak)$">
+    Require all denied
+</FilesMatch>
+
+# Apache 2.2 fallback
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.(log|old\.html|bak)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>

@@ -1,0 +1,5 @@
+# Runtime output from signup.php — not source, and it keeps growing.
+signups.log
+
+# macOS
+.DS_Store

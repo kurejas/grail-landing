@@ -1,0 +1,1435 @@
+@charset "utf-8";
+/* ============================================================
+   Grail — landing
+   Built 1:1 from Figma "Landing 2 sept '26" (file OLoNFPaCpr7VEcQiJ8D5c5).
+
+   Desktop fidelity model
+   ----------------------
+   The Figma frame is 1680x1000 with a 40px-inset card, so the design's
+   drawing surface is exactly 1600x920. On >=900px viewports every element
+   is positioned in those literal Figma pixels inside `.stage`, and the whole
+   stage is uniformly scaled by --k (set in JS). At a 1680x1000 viewport
+   --k is exactly 1 and the render is pixel-identical to the frame; at any
+   other size it scales proportionally instead of distorting.
+
+   Below 900px the stage is dropped and each section reflows to the
+   stacked mobile layout from the iPhone frames.
+   ============================================================ */
+
+/* ── Tokens ─────────────────────────────────────────────── */
+:root {
+  /* Figma variables */
+  --gold:         #e0b678;
+  --gold-50:      rgba(224, 182, 120, .5);
+  --blue:         #204c68;
+  --blue-bright:  #328195;
+  --slate:        #464f75;
+  --slate-bright: #5d699c;
+  --slate-mid:    #6974a5;
+  --ink:          #000;
+  --paper:        #fff;
+  --text:         #fff;
+  --text-body:    rgba(255, 255, 255, .85);
+
+  /* Per-section theme, switched by [data-theme] */
+  --grey:       #505050;
+  --grey-bright: #8a8a8a;
+  --theme:      var(--blue);
+  --theme-nav:  var(--blue-bright);
+  /* Zero-alpha form of --theme. CSS `transparent` is rgba(0,0,0,0), so a
+     gradient to it fades through black; Figma fades through the hue itself. */
+  --theme-0:    rgba(32, 76, 104, 0);
+
+  /* Card inset is a fixed 40px in the desktop and tablet frames and 20px in
+     the iPhone frame — not a fluid value, so it is set per breakpoint. */
+  --inset: 40px;
+  --radius: 40px;
+
+  /* Stage scale — overwritten by JS, 1 is the correct fallback */
+  
+
+  --shadow-sticker: -2px 2px 0 rgba(0, 0, 0, .16);
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+[data-theme="slate"] { --theme: var(--slate); --theme-nav: var(--slate-bright); --theme-0: rgba(70, 79, 117, 0); }
+/* Slide 3 is drawn on a neutral grey, not the blue — read off the frame. */
+[data-theme="grey"]  { --theme: var(--grey);  --theme-nav: var(--grey-bright);  --theme-0: rgba(80, 80, 80, 0); }
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+/* ── Type scale (fluid; exact Figma px at 1680) ─────────── */
+/* The display words are single unbroken units — GRAIL wraps its own letters
+   across five lines without this, because the wordmark is split into spans
+   around the card. nowrap belongs on the shared class, not per-element:
+   it was set only in the desktop block, so every one of them broke below
+   900px. Sizes below are chosen so nothing overflows once it cannot wrap. */
+.display {
+  font-size: clamp(52px, 8.571vw, 144px);
+  line-height: 1.0417;              /* 150/144 */
+  font-weight: 600;
+  font-style: italic;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.h2 {
+  font-size: clamp(22px, 2.857vw, 48px);
+  line-height: 1.0417;              /* 50/48 */
+  font-weight: 500;
+}
+.body {
+  font-size: clamp(14px, 1.0714vw, 18px);
+  line-height: 1.4444;              /* 26/18 */
+  font-weight: 500;
+  color: var(--text-body);
+}
+.gold { color: var(--gold); }
+
+/* ── Sticker buttons ────────────────────────────────────── */
+/* Figma "Button / L" and "Button / M": a white sticker outline, a filled
+   inner face with a 2px black keyline, and a dog-eared top-right corner.
+   The chamfer is a clip-path; the fold graphic supplies its black stroke. */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  isolation: isolate;
+  background: var(--paper);
+  filter: drop-shadow(var(--shadow-sticker));
+  transition: transform .25s var(--ease), filter .25s var(--ease);
+  --btn-fill: var(--paper);
+  --btn-text: var(--ink);
+}
+.btn::before {                       /* inner face */
+  content: "";
+  position: absolute;
+  background: var(--btn-fill);
+  border: 2px solid var(--ink);
+  z-index: -1;
+}
+.btn__t { position: relative; font-style: italic; font-weight: 500; text-transform: uppercase; white-space: nowrap; color: var(--btn-text); }
+.btn__fold { position: absolute; right: 0; top: 0; transform: rotate(180deg); }
+
+/* Large — 21px sides, 16.5/15.5 vertical, 14px radius, 13x14 chamfer */
+.btn--l {
+  padding: 16.5px 21px 15.5px;
+  border-radius: 14px;
+  clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+.btn--l::before { inset: 4px; border-radius: 10px; }
+.btn--l .btn__t { font-size: 20px; line-height: 22px; }
+.btn--l .btn__fold { width: 15px; height: 15px; }
+
+/* Medium — 16px sides, 10/9 vertical, 12px chamfer */
+.btn--m {
+  padding: 10px 16px 9px;
+  border-radius: 14px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 13px, 100% 100%, 0 100%);
+}
+.btn--m::before { inset: 2px; border-radius: 12px; }
+.btn--m .btn__t { font-size: 16px; line-height: 23px; }
+.btn--m .btn__fold { width: 14px; height: 14px; }
+
+.btn--gold { --btn-fill: var(--gold); --btn-text: var(--ink); }
+.btn--blue { --btn-fill: var(--blue); --btn-text: var(--text); }
+
+/* The design tilts each sticker a little */
+.btn--tilt-l { transform: rotate(-2deg); }
+.btn--tilt-r { transform: rotate(1deg); }
+.btn:hover { filter: drop-shadow(-3px 3px 0 rgba(0, 0, 0, .22)); }
+.btn--tilt-l:hover { transform: rotate(-2deg) translate(1px, -2px); }
+.btn--tilt-r:hover { transform: rotate(1deg) translate(1px, -2px); }
+.btn:not(.btn--tilt-l):not(.btn--tilt-r):hover { transform: translate(1px, -2px); }
+.btn:active { filter: drop-shadow(-1px 1px 0 rgba(0, 0, 0, .22)); }
+
+/* ── Fixed chrome ───────────────────────────────────────── */
+.chrome {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 200;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--inset);
+  pointer-events: none;
+}
+.chrome > * { pointer-events: auto; }
+
+.chrome__logo { position: absolute; left: 24px; top: 24px; }
+.chrome__logo img { width: 69px; height: 40px; }
+
+.chrome__nav {
+  position: absolute; left: 50%; top: 30px;
+  transform: translateX(-50%);
+  display: flex; gap: 38px; align-items: center;
+  font-size: 16px; line-height: 23px; white-space: nowrap;
+}
+/* An <a> with no href is not a link — no focus, no navigation. Kill the
+   pointer and hover lift too, so it does not advertise itself as clickable
+   while its destination is still pending. */
+.btn:not([href]):not(button) { cursor: default; }
+.btn:not([href]):not(button):hover { transform: none; }
+
+.chrome__link { transition: opacity .2s; }
+.chrome__link:hover { opacity: .7; }
+/* "How it Works" is a normal blue link by default and only turns gold +
+   italic while one of the How it Works slides (s2, its title slide,
+   through s7) is on screen — main.js sets data-nav="how" on <html>. */
+.chrome__link--how { color: var(--blue-bright); font-style: normal; }
+[data-nav="how"] .chrome__link--how { color: var(--gold); font-style: italic; }
+.chrome__link--uni { color: var(--theme-nav); transition: color var(--slide-dur, 600ms) var(--ease), opacity .2s; }
+
+.chrome .btn--m { position: absolute; right: 18.97px; top: 17.49px; transform: rotate(3deg); }
+.chrome .btn--m:hover { transform: rotate(3deg) translate(1px, -2px); }
+
+/* ── Dot rail ───────────────────────────────────────────── */
+/* 9 dots per the Section 1 template: 6px, 18px pitch, active 6x30 gold. */
+.dots {
+  position: fixed;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  z-index: 200;
+  width: 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.dots__dot {
+  width: 6px; height: 6px;
+  border-radius: 100px;
+  background: var(--theme);
+  padding: 0;
+  transition:
+    height .45s var(--ease),
+    background var(--slide-dur, 600ms) var(--ease),
+    opacity .3s;
+}
+button.dots__dot:hover { opacity: .65; }
+.dots__dot--ghost { cursor: default; opacity: .55; }
+.dots__dot.is-active { height: 30px; background: var(--gold); }
+
+/* ── Deck & sections ────────────────────────────────────── */
+/* Without JS this is an ordinary scrolling page — one section per screen.
+   The stacked slide deck below only switches on once .js is present. */
+.deck { position: relative; }
+/* No background of its own: the black surround comes from <body>, so a slide
+   never paints an opaque plate over the one behind it. The gradient card's
+   own top stop is fully transparent, which is what lets the receded slide
+   read through it during and after a transition. */
+.sec { position: relative; height: 100svh; }
+
+/* ── Slide transition ───────────────────────────────────────
+   From the "slide transition up down" prototype (38:16308):
+   the incoming slide rises from below the viewport into place while the
+   outgoing one recedes to 0.9 behind it. Scaling the whole section about
+   its centre reproduces Figma's numbers exactly — a 1680x1000 frame at 0.9
+   puts the 40px-inset card at 120,86 at 1440x828, which is state B.
+   600ms forward, 300ms back, ease-in-out, per the prototype's reactions. */
+.js body { overflow: hidden; }
+.js .deck { position: fixed; inset: 0; overflow: hidden; }
+
+.js .sec {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  transform: translateY(100%);
+  transition:
+    transform var(--slide-dur, 600ms) cubic-bezier(.42, 0, .58, 1),
+    opacity var(--slide-dur, 600ms) cubic-bezier(.42, 0, .58, 1);
+}
+/* Slide 1 is in place before JS runs, so the first paint never flashes empty
+   — including its card margins, which would otherwise start full-bleed and
+   visibly snap inwards the moment main.js marks it current. The is-current /
+   is-past rules below share this specificity and come later, so they win. */
+.js .sec:first-child { transform: translateY(0); }
+.js .sec:first-child .card:not(.card--narrow) { left: var(--inset); right: var(--inset); }
+.js .sec.is-current { transform: translateY(0) scale(1); }
+.js .sec.no-trans, .js .sec.no-trans .card { transition: none !important; }
+
+/* The outgoing slide recedes AND fades — gradient included, not just its
+   contents — so it clears away rather than sitting behind the new one. */
+.js .sec.is-past { transform: translateY(0) scale(.9); opacity: 0; }
+
+/* Anything two or more slides away is never seen — keep it off the
+   compositor instead of painting a stack of full-screen sections. */
+.js .sec.is-far {
+  visibility: hidden;
+  transition:
+    transform var(--slide-dur, 600ms) cubic-bezier(.42, 0, .58, 1),
+    opacity var(--slide-dur, 600ms) cubic-bezier(.42, 0, .58, 1),
+    visibility 0s linear var(--slide-dur, 600ms);
+}
+
+/* The gradient card: transparent -> theme at 50% -> gold at 100%.
+
+   The two themed stops come from registered @property colours held on :root
+   (set by main.js as each slide lands) rather than from the section's own
+   --theme, so they can be TRANSITIONED. Plain custom properties and gradients
+   cannot animate; registered <color> ones can. Every visible card therefore
+   tweens from the outgoing slide's colour to the incoming one on the same
+   clock as the slide travel, instead of each card popping to its own colour
+   at the moment it arrives. Browsers without @property fall back to the flat
+   colour, just without the tween. */
+.card {
+  position: absolute;
+  inset: var(--inset);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--deck-0) 0%, var(--deck-mid) 50%, var(--gold) 100%);
+}
+
+/* A slide waiting below is full-bleed — its card runs edge to edge, and the
+   side margins ease in as it arrives, matching the prototype where the
+   incoming slide is 1680 wide at (0,1000) and settles to 1600 at (40,40).
+   Only the sides animate; the vertical geometry is the slide's own travel,
+   and section 2's card sets its own top/bottom. Uses --inset rather than a
+   literal 40px, so the smaller mobile margin is honoured automatically. */
+/* :not(.card--narrow) — slide 9's card is 920 centred, so the full-bleed
+   arrival slide does not apply to it and would otherwise override its left. */
+.js .sec .card:not(.card--narrow) {
+  left: 0;
+  right: 0;
+  transition:
+    left var(--slide-dur, 600ms) cubic-bezier(.42, 0, .58, 1),
+    right var(--slide-dur, 600ms) cubic-bezier(.42, 0, .58, 1);
+}
+.js .sec.is-current .card:not(.card--narrow),
+.js .sec.is-past .card:not(.card--narrow) { left: var(--inset); right: var(--inset); }
+
+.sec__free { position: absolute; inset: 0; overflow: hidden; }
+
+/* Section 2 title — the gradient runs across all three lines as one fill */
+/* Section 2 title. The gradient lives on each LINE, not on the <h2>.
+   Two reasons, both bugs I hit doing it the other way:
+   - the lines are block boxes, so a background clipped to text on the parent
+     never reaches their glyphs once they inherit a transparent fill — the
+     words simply vanish;
+   - Safari drops -webkit-background-clip: text when the clipped element also
+     carries a transform, which centring with translateX(-50%) did.
+   So: no transform on the clipped element (centred with left/right:0), and
+   background and glyphs on the same box. The design's gradient still runs
+   unbroken across all three lines — each line shows its own third of a
+   backdrop three lines tall. */
+.how__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.how__w { display: block; }
+.how__g {
+  display: block;
+  white-space: pre;
+  background-image: linear-gradient(180deg, rgba(70, 79, 117, .5) 0%, var(--slate-mid) 33%, var(--gold) 75%);
+  background-size: 100% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.how__w:nth-child(1) .how__g { background-position: 0 0%; }
+.how__w:nth-child(2) .how__g { background-position: 0 50%; }
+.how__w:nth-child(3) .how__g { background-position: 0 100%; }
+
+/* ── Phone mock ─────────────────────────────────────────── */
+/* One geometry for every breakpoint: the box is the 600x1218.4 device, the
+   screen sits inside it at the Figma offsets, and the bezel PNG is drawn
+   slightly oversized and clipped exactly as the frame does. */
+.phone { position: relative; aspect-ratio: 600 / 1218.4; }
+.phone__screen {
+  position: absolute;
+  left: 5.3233%; top: 2.3623%;
+  width: 89.2%; height: 95.5%;
+  border-radius: 8%;
+  overflow: hidden;
+  background: #000;
+}
+.phone__video, .phone__layer { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.phone__layer { position: absolute; inset: 0; }
+.phone__frame { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+/* max-width:none — the bezel is deliberately drawn larger than its clip box */
+.phone__frame img { position: absolute; left: -1.39%; top: -.96%; width: 102.77%; height: 101.92%; max-width: none; }
+
+/* The slide surface. NOTHING here is transform-scaled — the Figma frame is a
+   reference for PROPORTIONS, not a canvas we shrink. Positions are percentages
+   of that reference (x/1600, y/920), type is real px clamped against vw, and
+   artwork widths are vw with a px ceiling. So text stays at a readable, real
+   size on every screen and the composition reflows around it, which is what
+   the auto-layout in the file actually describes. */
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Content crossfade ──────────────────────────────────────
+   Only the contents of a slide fade — the gradient card itself never does,
+   so the backgrounds stay solid while the copy and artwork swap over.
+   Leaving is quicker and unstaggered so the outgoing slide clears out of the
+   way; arriving is slower and staggered, which is what gives each slide its
+   entrance. Keying off .is-current rather than a one-shot class means it
+   plays every time a slide is visited, in both directions. */
+.js [data-reveal] {
+  opacity: 0;
+  transition: opacity .42s var(--ease);
+  transition-delay: var(--d, 0ms);
+}
+/* is-past as well as is-current: a slide on its way out keeps its contents at
+   full opacity and the WHOLE slide fades as one, rather than the copy dissolving
+   at one speed while the gradient behind it goes at another. Contents only fade
+   in — on arrival, staggered — never out. */
+.js .sec.is-current [data-reveal],
+.js .sec.is-past [data-reveal] { opacity: 1; }
+
+/* ============================================================
+   MOBILE FIRST  (< 1366px) — stacked, per the iPhone frames
+   ============================================================ */
+/* Slide contents are positioned layers on the surface by default; the
+   small-screen rules below turn individual stages into flex stacks. */
+.stage > * { position: absolute; }
+
+@media (max-width: 1365.98px) {
+  /* Type, sized off the 402px iPhone frame: 54 / 21 / 13 */
+  .display { font-size: clamp(38px, 13.4vw, 76px); line-height: 1.0417; }
+  .h2      { font-size: clamp(17px, 5.2vw, 30px);  line-height: 1.0417; }
+  .body    { font-size: clamp(12px, 3.2vw, 17px);  line-height: 1.4444; }
+
+  /* Slide 4 and 7 have no small-screen frame either, so they stack like the
+     rest. The hero and slide 2 opt out — they have real layouts below. */
+  .sec--avatar .stage, .sec--hobby .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 76px 18px 0;
+    overflow: hidden;
+  }
+  .chrome { height: 64px; }
+  .chrome__logo { left: var(--inset); top: var(--inset); }
+  .chrome__logo img { width: 65px; height: 38px; }
+  /* Only "Grail University" survives here. The iPhone frame puts it at
+     x 157 w 109 in a 402 frame — centre 211.5, i.e. 10.5 right of the frame
+     centre, not centred. */
+  .chrome__nav {
+    left: calc(50% + 10.5px); top: 50%; transform: translate(-50%, -50%);
+    font-size: 14px; gap: 20px;
+  }
+  .chrome__link--how { display: none; }   /* the iPhone frame keeps only one link */
+  .chrome .btn--m { right: var(--inset); top: 50%; transform: translateY(-50%) rotate(3deg); }
+  .chrome .btn--m:hover { transform: translateY(-50%) rotate(3deg) translate(1px, -2px); }
+  .chrome .btn--m .btn__t { font-size: 14px; }
+
+  .dots { width: 20px; gap: 10px; }
+  .dots__dot { width: 4px; height: 4px; }
+  .dots__dot.is-active { height: 20px; }
+
+  /* Buttons scale down so two can still sit side by side at 360px */
+  .btn--l { padding: 11px 14px 10px; }
+  .btn--l .btn__t { font-size: clamp(12px, 3.6vw, 16px); line-height: 1.1; }
+
+}
+
+/* ============================================================
+   SLIDE 1 — Hero
+   Desktop 47:19832 (1680x1000) · Tablet 60:28881 (834x1194)
+   iPhone  50:22433 (402x814)
+
+   A direct translation of the three frames' auto-layout. Every type
+   size, gap and artwork box below is a literal px constant read off
+   the file. The CONTAINERS flex; the contents never scale. The only
+   thing that changes between desktop and tablet is the direction of
+   the slide — the numbers inside are identical.
+   ============================================================ */
+
+/* In-slide scrolling. When the slide is taller than the viewport (the
+   min-height floor), the whole card slides up under the fixed chrome by
+   --scroll before the deck moves on. Transform only — the card's own
+   transition covers left/right, so this is not animated and tracks the
+   wheel 1:1. */
+.sec--split .card {
+  transform: translateY(calc(-1 * var(--scroll, 0px)));
+  will-change: transform;
+}
+
+.sec--split .stage { display: flex; }
+.split__col { position: relative; min-width: 0; }
+
+/* Content */
+.split__copy {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  width: 100%;
+  /* Every text node in these three frames is textAlignHorizontal=CENTER.
+     align-items only centres the BOXES; without this the lines sit left
+     inside them, and the gap in "GRA_L" walks away from the card. */
+  text-align: center;
+}
+/* Heading — position:relative so the card hangs off it, as in the frame */
+.split__heading {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%;
+}
+.split__body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.hero__wordmark { color: var(--gold); }
+.hero__gap { display: inline-block; }
+.hero__actions { display: flex; align-items: flex-start; isolation: isolate; }
+/* Frame 8 is 62 tall on desktop/tablet and 90 on mobile. Those are the
+   ROTATED bounding boxes of the tilted buttons — Figma grows an auto-layout
+   to fit a rotated child, CSS transforms never affect layout. Without this
+   the row is 8px short and the centred stack sits 4px low. */
+
+/* The Mantle card is a FIXED rectangle in every frame — 100x146, 100x146,
+   50x73 — never derived from the type it sits beside.
+
+   It is placed from the CENTRE, not the left edge. The wordmark is centred
+   text, so a left offset only lands in the gap at the frame's exact width;
+   at 1000px it drifted onto the "A". Measured from the centre it is the
+   same +116 on desktop and tablet (and +57 on mobile), which is the number
+   the design actually holds. */
+.hero__card { position: absolute; display: grid; place-items: center; }
+/* All three cards share ONE grid cell, so adding them cannot move the card
+   relative to the wordmark — the box is still sized by a single card. */
+.hero__card img { object-fit: cover; grid-area: 1 / 1; }
+
+/* ── Slow fade loop ───────────────────────────────────────────
+   Three stills cross-fading on a 15s cycle: 1s in, 4s held, 1s out, then
+   idle while the other two take their turn. The next one starts fading in as
+   the current one fades out, so the frame is never empty. Only opacity is
+   animated — every other property (size, rotation, position) is left to the
+   breakpoint rules, so the artwork cannot drift. */
+@keyframes fade-cycle {
+  0%      { opacity: 0; }
+  6.67%   { opacity: 1; }   /* 1s  — faded in  */
+  33.33%  { opacity: 1; }   /* 5s  — 4s held   */
+  40%     { opacity: 0; }   /* 6s  — faded out */
+  100%    { opacity: 0; }
+}
+.fade-cycle > * {
+  opacity: 0;
+  animation: fade-cycle 15s linear infinite;
+}
+/* The Grail University phone only cycles when the phoneCrossfade switch is on
+   (main.js sets data-gu-crossfade); with it off the first screen simply
+   stays. The hero cards are not governed by that switch. */
+[data-gu-crossfade] .phone__screen.fade-cycle > * { animation-name: fade-cycle; }
+.phone__screen.fade-cycle > * { animation-name: none; opacity: 0; }
+.phone__screen.fade-cycle > *:first-child { opacity: 1; }
+[data-gu-crossfade] .phone__screen.fade-cycle > *:first-child { opacity: 0; }
+
+.fade-cycle > *:nth-child(1) { animation-delay:  0s; }
+.fade-cycle > *:nth-child(2) { animation-delay:  5s; }
+.fade-cycle > *:nth-child(3) { animation-delay: 10s; }
+/* The phone frame is a sibling of the screen, never part of the rotation. */
+.fade-cycle > .phone__frame { animation: none; opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-cycle > * { animation: none; opacity: 0; }
+  .fade-cycle > *:nth-child(1) { opacity: 1; }
+}
+
+.phone--hero { position: absolute; transform: translate(-50%, -50%) rotate(2.5deg); }
+
+/* ── Shared type and heading rhythm ───────────────────────────
+   Every split slide has the same Heading/Body shape in the file: lines
+   stacked with a -6 gap (-2 on mobile), a 48/50 kicker, a 144/150 display
+   word, an optional 48/50 tail line, and an 18/26 body. Slides differ only
+   in which lines they carry and where their inline artwork sits. */
+.split__heading > * + * { margin-top: var(--head-gap, -6px); }
+/* The pictogram is absolutely positioned but still picks up that negative
+   gap, which shifted every one of them 6px up. Its `top` is measured from
+   the heading, so the margin has to be cleared. */
+.split__art { position: absolute; margin-top: 0 !important; }
+
+/* A letter the artwork stands in for: it keeps its place in the line so the
+   word still sets correctly, but paints nothing — otherwise the gold glyph
+   shows through behind the heart on HOBBY and the dice on SEASON. */
+.letter-out { color: transparent; }
+/* Without height:auto the img keeps its HTML height attribute and stretches;
+   this has to sit outside the desktop block so tablet and mobile get it. */
+/* THESE NEVER SCALE. They are placed at their exact Figma pixel size —
+   full size on desktop and tablet, exactly half on mobile — and when the
+   screen is too short to show all of it, the bottom is simply hidden by the
+   card's clip. On a large screen the whole thing is visible. No object-fit,
+   no max-height: fitting to the column would be scaling. */
+.avatar__art img { width: 100%; height: 100%; display: block; }
+
+/* Inline pictograms hang off the BIG WORD, not the heading. Anchoring them
+   to the heading meant that when the white lines above rewrapped — which they
+   do at any width the frame does not cover — the artwork stayed put while the
+   word moved, and the dice ended up in the middle of the sentence. Measured
+   from the word, they cannot come apart from it.
+   left is the frame's x minus the word's centre; top is from the word's top.
+   They belong to the 144px display, which desktop and tablet share — mobile
+   halves them with the type. */
+.split__heading .display { position: relative; }
+.gems__icon    { left: calc(50% + 99px);  top: 77px;  width: 58px;  height: 58px; }
+.avatar__beanie{ left: calc(50% + 199px); top: -24px; width: 84px;  height: 66px; }
+.trade__icon   { left: calc(50% - 72px);  top: 14px;  width: 46px;  height: 88px; }
+.season__dice  { left: calc(50% + 79px);  top: 8px;   width: 120px; height: 135px; }
+.hobby__heart  { left: calc(50% - 148px); top: 13px;  width: 129px; height: auto;
+                 transform: rotate(-7.5deg); }   /* frame: 129x111.9, rot 7.5 */
+
+/* Artwork that hangs off a word is placed from the heading's CENTRE, because
+   the lines are centred — a left offset only lands right at one exact column
+   width. left = (artwork's x in the frame) - (heading's centre x). */
+.split__col--r > * { position: absolute; }
+
+/* ── Desktop >=1366 ───────────────────────────────────────────
+   slide 1600x920 · HORIZONTAL · gap 80 · padding L/R 100
+   L and R are both FILL with grow 1, so they split 1320 into 660 each. */
+@media (min-width: 1366px) {
+  .sec--split .stage {
+    flex-direction: row; align-items: center;
+    gap: 80px; padding: 0 100px;
+  }
+  .sec--split .split__col { flex: 1 1 0; align-self: stretch; }
+  .sec--split .split__copy { height: 100%; gap: 20px; padding: 0 40px; }
+
+  /* Fixed type, shared by all six split slides. These were hero-scoped, so
+     slides 3-7 were falling through to the old vw clamps. */
+  .sec--split .split__heading .h2      { font-size: 48px; line-height: 50px; white-space: nowrap; }
+  .sec--split .split__heading .display { font-size: 144px; line-height: 150px; }
+  .sec--split .split__body             { gap: 32px; }
+  .sec--split .split__body .body       { font-size: 18px; line-height: 26px; }
+  /* Slide 6's opening line is drawn as two wrapped lines, not one. Needs to
+     outrank the nowrap above, hence the longer selector. */
+  .sec--season .split__heading .season__l1 { white-space: normal; }
+  /* ...and its two paragraphs sit 12 apart, not 32 — there is no button. */
+  .sec--season .split__body { gap: 12px; }
+
+  /* Every second slide swaps sides. The markup always puts the copy first
+     (which is the order the small-screen frames use), so only desktop needs
+     to reorder. */
+  .sec--flip .split__col--r { order: -1; }
+
+  .sec--hero .hero__kicker   { font-size: 48px; line-height: 50px; }
+  .sec--hero .hero__wordmark { font-size: 144px; line-height: 150px; width: 580px; margin-top: -6px; }
+  .sec--hero .hero__gap      { width: 71px; }
+
+  .sec--hero .hero__card     { left: calc(50% + 66px); top: 5px; width: 100px; height: 146px; }
+  .sec--hero .hero__card img { width: 79px; height: 135px; border: 1.8px solid var(--ink); border-radius: 3.6px; transform: rotate(9.23deg); }
+
+  .sec--hero .split__body     { gap: 32px; }
+  .sec--hero .split__body .body { font-size: 18px; line-height: 26px; }
+  .sec--hero .hero__actions { min-height: 62px; }
+  .sec--hero .hero__actions .btn:first-child { margin-right: -8px; z-index: 2; }
+  .sec--hero .hero__actions .btn:last-child  { z-index: 1; }
+
+  /* The phone hangs from the TOP of R, not centred on it. In the frame its
+     group bbox sits at 54,84 inside R (684x920) at -2.5deg; unrotated that
+     is a 600x1218.4 box with its top at 96 and its centre at 380.5 across.
+     Centring it vertically pushed it down and right — 96px from R's top and
+     55.63% across reproduces the frame and keeps the gap on the right. */
+  .sec--hero .phone--hero {
+    left: 55.63%; top: 96px;
+    width: 600px;
+    transform: translateX(-50%) rotate(2.5deg);
+  }
+}
+
+/* ── Tablet 760–1365 ──────────────────────────────────────────
+   The tablet frame (60:28881) was redrawn: its desktop-sized copy column is
+   switched OFF and the live one carries MOBILE type and spacing — 28/32,
+   72/75, 14/22, gaps 10 / 16 / -2, a hugging wordmark with the card sitting
+   on top of it, and a 480 body measure. The only things that stay tablet-
+   sized are the container widths and the artwork. */
+@media (min-width: 760px) and (max-width: 1365.98px) {
+  .sec--split .stage {
+    flex-direction: column; justify-content: center;
+    gap: 40px; padding: 80px 0;
+  }
+  .sec--split .split__col--l { flex: 0 0 auto; width: 100%; }
+  /* Fixed 272 slot, as on mobile — letting this column grow parked the
+     artwork at the top of a tall empty box and opened a large gap under the
+     copy on deep viewports. */
+  .sec--split .split__col--r { flex: 0 0 272px; width: 100%; }
+  .sec--split .split__copy { gap: 10px; padding: 0 20px; }
+  .split__heading { --head-gap: -2px; }
+
+  .sec--split .split__heading .h2      { font-size: 28px; line-height: 32px; }
+  .sec--split .split__heading .display { font-size: 72px; line-height: 75px; }
+  .sec--split .split__body             { gap: 16px; }
+  .sec--split .split__body .body       { font-size: 14px; line-height: 22px; max-width: 480px; }
+  .sec--season .split__body { gap: 8px; }
+
+  /* Pictograms halve with the type, same as mobile. */
+  .gems__icon    { left: calc(50% + 49px);  top: 38.5px; width: 29px;   height: 29px; }
+  .avatar__beanie{ left: calc(50% + 99.5px);top: -12px;  width: 42px;   height: 33px; }
+  .trade__icon   { left: calc(50% - 36px);  top: 7px;    width: 23px;   height: 44px; }
+  .season__dice  { left: calc(50% + 39.5px);top: 4px;    width: 60px;   height: 67.5px; }
+  .hobby__heart  { left: calc(50% - 74px);  top: 6.5px;  width: 64.5px; height: auto;
+                   transform: rotate(-7.5deg); }
+
+  /* Hero heading: the wordmark HUGS here, which is what puts the card on top
+     of the letters rather than in a gap. Card 50x73 at +57 from the heading
+     centre, 38 down — the same offsets the iPhone frame uses. */
+  .sec--hero .split__heading { --fs-word: 72px; }
+  .sec--hero .hero__kicker   { font-size: 28px; line-height: 32px; margin-bottom: -.071em; }
+  .sec--hero .hero__wordmark { font-size: var(--fs-word); line-height: 75px; width: fit-content; color: var(--gold); }
+  .sec--hero .hero__card     { font-size: var(--fs-word); left: calc(50% + 32px); top: 8px; width: 50px; height: 73px; }
+  .sec--hero .hero__card img { width: 80%; height: 93.2%; object-fit: cover; border: 1px solid var(--ink); border-radius: 2px; transform: rotate(9.2deg); }
+  .sec--hero .hero__gap      { width: 36px; }
+  .sec--hero .split__body .body { font-size: 14px; line-height: 22px; max-width: 480px; }
+
+  /* BUTTONS is 372x49 in the frame — the mobile button size, still in a row. */
+  .sec--hero .hero__actions { flex-direction: row; min-height: 49px; }
+  .sec--hero .hero__actions .btn { padding: 10px 16px 9px; margin: 0; }
+  .sec--hero .hero__actions .btn__t { font-size: 16px; line-height: 23px; }
+  .sec--hero .hero__actions .btn:first-child { margin-right: -8px; z-index: 2; }
+
+  /* Artwork is shared with mobile below — see "Artwork, tablet AND mobile". */
+}
+
+/* ── Mobile <=759 ─────────────────────────────────────────────
+   c 362x774 · VERTICAL · gap 28 · padding T/B 70 · top-aligned
+   The one breakpoint where the numbers change. */
+@media (max-width: 759.98px) {
+  .sec--split .stage {
+    flex-direction: column; justify-content: flex-start;
+    gap: 28px; padding: 70px 0;
+  }
+  .sec--split .split__col--l { flex: 0 0 auto; width: 100%; }
+  .sec--split .split__col--r { flex: 0 0 272px; width: 100%; }
+  .sec--split .split__copy { gap: 10px; padding: 0 20px; }
+  .split__heading { --head-gap: -2px; }
+  .sec--split .split__heading .h2      { font-size: 28px; line-height: 32px; }
+  .sec--split .split__heading .display { font-size: 72px; line-height: 75px; }
+  .sec--split .split__body             { gap: 16px; }
+  .sec--split .split__body .body       { font-size: 14px; line-height: 22px; max-width: 480px; }
+  .sec--season .split__body { gap: 8px; }
+
+  .gems__icon    { left: calc(50% + 49px);  top: 38.5px; width: 29px;   height: 29px; }
+  .avatar__beanie{ left: calc(50% + 99.5px);top: -12px;  width: 42px;   height: 33px; }
+  .trade__icon   { left: calc(50% - 36px);  top: 7px;    width: 23px;   height: 44px; }
+  .season__dice  { left: calc(50% + 39.5px);top: 4px;    width: 60px;   height: 67.5px; }
+  .hobby__heart  { left: calc(50% - 74px);  top: 6.5px;  width: 64.5px; height: auto;
+                   transform: rotate(-7.5deg); }
+
+  .sec--hero .hero__kicker   { font-size: 28px; line-height: 32px; }
+  /* HUG on this frame — the box is the word, which is why the card sits
+     tight against the letters here and centred in a wider box elsewhere */
+  .sec--hero .hero__wordmark { font-size: 72px; line-height: 75px; width: fit-content; margin-top: -2px; }
+  .sec--hero .hero__gap      { width: 36px; }
+
+  .sec--hero .hero__card     { left: calc(50% + 32px); top: 8px; width: 50px; height: 73px; }
+  .sec--hero .hero__card img { width: 40px; height: 68px; border: 1px solid var(--ink); border-radius: 2px; transform: rotate(9.2deg); }
+
+  .sec--hero .split__body     { gap: 16px; }
+  /* 480 per the frame — only bites on the wider phones up to 759. */
+  .sec--hero .split__body .body { font-size: 14px; line-height: 22px; max-width: 480px; }
+  /* Frame 8 is 189x90 here — narrower and taller, i.e. stacked */
+  .sec--hero .hero__actions { flex-direction: column; align-items: center; gap: 3px; min-height: 90px; }
+  .sec--hero .hero__actions .btn { padding: 10px 16px 9px; margin: 0; }
+  .sec--hero .hero__actions .btn__t { font-size: 16px; line-height: 23px; }
+  .sec--hero .hero__actions .btn:first-child { z-index: 2; }
+
+  /* same rule as tablet — bbox 17,0 in R (362x272), so unrotated the 300px
+     phone has its top at 6, centred across the column */
+  .sec--hero .phone--hero {
+    left: 50%; top: 6px;
+    width: 300px;
+    transform: translateX(-50%) rotate(2.5deg);
+  }
+}
+
+/* ============================================================
+   Promo banner — fixed bottom-left, appears 4s after load
+   ============================================================ */
+.promo {
+  position: fixed;
+  /* bottom 20, not 14: the -2deg rotation drops the visual bottom-left corner,
+     and the frame's own bbox sits at rows 844-987 of 1000. */
+  left: 20px; bottom: 20px;
+  z-index: 250;
+  /* Inner Banner is 504x145 in the frame — it was 500x128, which squashed
+     everything inside it and pushed the headline up into the kicker. */
+  width: 504px; height: 145px;
+  transform: rotate(-2deg) translateY(190%);
+  transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+}
+.promo.is-up { transform: rotate(-2deg) translateY(0); }
+
+.promo__inner {
+  position: absolute; inset: 0;
+  background: var(--ink);
+  border: 2px solid var(--paper);
+  border-radius: 14px;
+  overflow: hidden;
+}
+/* The banner picks up the current slide's theme. Gradients cannot be
+   transitioned, but a custom property registered with @property can be — so
+   the two themed stops animate on the same clock as the slide instead of
+   popping. Browsers without @property still get the colour, just instantly. */
+/* The slide cards' two themed gradient stops, registered so they animate. */
+@property --deck-mid {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #204c68;
+}
+@property --deck-0 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(32, 76, 104, 0);
+}
+
+@property --promo-mid {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #328195;
+}
+@property --promo-fade {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(32, 76, 104, 0);
+}
+
+/* These are the resting values and the no-JS fallback. With JS on, main.js
+   tweens --deck-mid / --deck-0 on :root frame by frame across a slide change,
+   so every card's gradient eases from the outgoing slide's colour to the
+   incoming one instead of popping. A CSS transition cannot do it here: a card
+   is visibility:hidden while it is two or more slides away, and a transition
+   begun on a hidden element sticks at its start value. */
+:root                    { --promo-mid: var(--blue-bright);  --promo-fade: rgba(32, 76, 104, 0);
+                           --deck-mid: var(--blue);   --deck-0: rgba(32, 76, 104, 0); }
+:root[data-theme="slate"]{ --promo-mid: var(--slate-bright); --promo-fade: rgba(70, 79, 117, 0);
+                           --deck-mid: var(--slate);  --deck-0: rgba(70, 79, 117, 0); }
+:root[data-theme="grey"] { --promo-mid: var(--grey-bright);  --promo-fade: rgba(80, 80, 80, 0);
+                           --deck-mid: var(--grey);   --deck-0: rgba(80, 80, 80, 0); }
+
+.promo__inner::before {              /* the "in 2" gradient face */
+  content: "";
+  position: absolute; inset: 2px;
+  border-radius: 10px;
+  background: linear-gradient(-10.33deg, var(--gold) 9.23%, var(--promo-mid) 21.22%, var(--promo-fade) 57.16%);
+  transition:
+    --promo-mid var(--slide-dur, 600ms) var(--ease),
+    --promo-fade var(--slide-dur, 600ms) var(--ease);
+}
+.promo__gold, .promo__jacket, .promo__kicker, .promo__headline, .promo__close { position: absolute; }
+
+/* Whole-banner hit area. Above the artwork and copy so a click anywhere goes
+   to the form, below the close button so the X still dismisses. */
+.promo__hit { position: absolute; inset: 0; z-index: 1; border-radius: 12px; }
+.promo__close { z-index: 2; }
+.promo { cursor: pointer; }
+
+.promo__gold   { left: 278px; top: 61px; width: 95px; height: 84px; }
+/* Placed by eye against the Figma render, NOT by the frame's "jacket" node
+   box (148x129 at 329,-18 on desktop). Our jacket.png is a different crop —
+   it carries the whole sleeve where the frame's rect shows only the hands —
+   so matching the box makes the artwork too large and too central. */
+.promo__jacket { left: 395px; top: 44px; width: 125px; height: 96.5px; transform: rotate(-15deg); }
+
+/* Both lines are taken from the node's own transform in the file: the origin
+   below is where its untransformed top-left lands, so transform-origin has to
+   be 0 0 to match. They carry DIFFERENT rotations — 2deg on the kicker, 4deg
+   on the headline — which is what gives the banner its hand-lettered look. */
+.promo__kicker {
+  left: 18.7px; top: 26.6px;
+  font-size: 20px; line-height: 22px;
+  font-style: italic; font-weight: 400;
+  text-transform: uppercase; white-space: nowrap;
+  color: var(--text);
+  transform: rotate(-2deg);
+  transform-origin: 0 0;
+}
+.promo__headline {
+  left: 16.7px; top: 60.3px;
+  /* 416, not the Figma 406.5: "FOUNDING MEMBER COSMETIC," measures 408px in
+     the browser against Figma's slightly tighter fit, so at 406 it broke a
+     word early and cascaded the headline onto a third line. */
+  width: 416px;
+  font-size: 26px; line-height: 28px;
+  font-style: italic; font-weight: 300;
+  text-transform: uppercase;
+  color: var(--gold);
+  transform: rotate(-4deg);
+  transform-origin: 0 0;
+}
+.promo__close {
+  right: 10px; top: 9px;
+  width: 28px; height: 31px;
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.promo__close svg { width: 100%; height: 100%; }
+.promo__close:hover { opacity: .6; }
+
+.promo__cta {
+  position: absolute;
+  right: -5px; bottom: -6px;
+  transform: rotate(-2deg);
+}
+.promo__cta:hover { transform: rotate(-2deg) translate(1px, -2px); }
+
+@media (max-width: 759.98px) {
+  .promo { left: 8px; bottom: 5px; width: 382px; height: 162px; transform: rotate(-1.5deg) translateY(190%); }
+  .promo.is-up { transform: rotate(-1.5deg) translateY(0); }
+  /* The frame's gold pictogram is 76x76 at 164,106 here against 95x95 at
+     282,62 on desktop — a 0.8 scale. It was inheriting the desktop size, so
+     it sat too big, too far left and too high. Height keeps the asset's own
+     95:84 aspect rather than the square node box. */
+  .promo__gold   { left: 160.9px; top: 105.5px; width: 76px; height: 67.2px; }
+  /* jacket.png is not the same crop as the frame's "jacket" rect — ours
+     carries the whole sleeve, the frame's shows only the hands — so this one
+     is placed by eye against the Figma render rather than by its node box. */
+  .promo__jacket { left: 277px; top: 61px; width: 125px; height: 96.5px; }
+  /* Mobile's own text values from the frame, rather than inheriting desktop's.
+     Kicker 18.5,26.8 · headline 16.2,60.4 at 306.5 wide (3 lines of 28). */
+  .promo__kicker   { left: 18.5px; top: 26.8px; }
+  .promo__headline { left: 16.2px; top: 60.4px; width: 306.5px; }
+  .promo__close { right: 8px; top: 9px; }
+  .promo__cta { right: -3px; bottom: -6px; }
+}
+
+/* Narrower than the 382px banner itself — keep it on screen */
+@media (max-width: 399.98px) {
+  .promo { left: 6px; right: 6px; width: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo { transition: none; }
+}
+
+/* The iPhone frame insets its card by 20, not 40 */
+@media (max-width: 759.98px) {
+  :root { --inset: 20px; --radius: 24px; }
+}
+
+/* Tablet keeps both nav links, centred, as in the 834 frame */
+@media (min-width: 760px) and (max-width: 1365.98px) {
+  .chrome__nav { left: 50%; top: 30px; transform: translateX(-50%); font-size: 16px; gap: 38px; }
+  .chrome__link--how { display: inline; }
+  .chrome .btn--m { top: 17.49px; transform: rotate(3deg); }
+  .chrome .btn--m:hover { transform: rotate(3deg) translate(1px, -2px); }
+  .chrome__logo { left: 24px; top: 24px; }
+  .chrome__logo img { width: 69px; height: 40px; }
+  .dots { width: 40px; gap: 12px; }
+  .dots__dot { width: 6px; height: 6px; }
+  .dots__dot.is-active { height: 30px; }
+}
+
+/* ============================================================
+   SLIDES 3-7 — the five split slides
+   S3 44:18215 · S4 24:8304 · S5 44:18944 · S6 60:29227 · S7 24:8273
+
+   All five are the hero's layout again: a 1600x920 slide, two equal
+   columns with a 80 gutter and 100 side margins, copy centred in one and
+   the artwork in the other. They differ only in which side the copy sits
+   on, which lines the heading carries, and where the inline pictogram and
+   the artwork sit. Every value is a literal px constant off the frame.
+
+   Column order alternates: 3 visual-left, 4 copy-left, 5 visual-left,
+   6 copy-left, 7 visual-left. The markup is always copy-first (the order
+   the small-screen frames use) and .sec--flip reverses it on desktop.
+   ============================================================ */
+@media (min-width: 1366px) {
+  /* Slide 6 is drawn on a slightly wider column: 80 side margins, not 100. */
+  .sec--season .stage { padding: 0 80px; }
+
+  /* Artwork, placed inside its column. The phones and the avatar card all
+     run past the bottom of the slide and are clipped by the card. */
+  .phone--gems, .phone--trade, .phone--hobby {
+    left: 48.318%; top: 84.5px;
+    width: 600px;
+    transform: translateX(-50%) rotate(2.5deg);
+  }
+  /* The card and the fan are exported already rotated, so they are placed by
+     their RENDER bounds (the rotated ink) and get no transform of their own —
+     rotating again would double it. Card 644.1x845.3 at 45.9,74.7 in R;
+     fan 939.5x920 at -179.5,0, i.e. hanging off the left of its column. */
+  /* Exact frame pixels: 644.1x1049.7 at 45.9,74.7 in a 660 column, so its
+     centre sits at 368 of 660. The export is already rotated, so no rotation
+     here. */
+  .avatar__art {
+    left: 55.758%; top: 74.7px;
+    width: 644.1px; height: 1049.7px;
+    transform: translateX(-50%);
+  }
+  /* 661.9x834.3 at 65,124.1 in a 680 column -> centre 395.9 of 680. */
+  .season__cards {
+    left: 58.221%; top: 124.1px;
+    width: 661.9px; height: 834.3px;
+    max-width: none;              /* the global img cap would clamp it to the column */
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================================
+   SLIDE 8 — We choose you
+   Desktop 32:13550 (1680x1000) · Tablet 107:35408 (834x1194)
+   iPhone  50:26719 (402x814)
+
+   Sits on the frame, not on a card. Desktop is 144/125 and LEFT aligned in
+   an 895 box; tablet and mobile share one 334.4-wide CENTRED box at 72/62.5.
+   The title is rotated 2deg in the file (CSS -2deg, origin top-left) and the
+   avatar is placed by its RENDER bounds, which include its glow.
+   ============================================================ */
+.choose__glow {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 50%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.sec--choose .sec__free { overflow: hidden; }
+
+/* Title + avatar are ONE rigid group, exactly as they sit in the frame.
+   The group carries the Figma offsets between the two; only the group moves.
+   It is centred on both axes at every breakpoint, so the pair can never drift
+   apart or run off the edge on an in-between viewport.
+
+   Group box: width = the title's unrotated width (what Figma centres on),
+   height = title-bbox-top -> avatar bottom. The title's rotated bounding box
+   starts at the group's top, so the h2's own layout top sits one rotation
+   lift lower: lift = width * sin(2deg). */
+.choose__group {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 895.2px;                     /* title width, 1680 frame */
+  height: 566.2px;                    /* 254.6 -> 820.8 */
+}
+
+.choose__title {
+  position: absolute;
+  left: 0;
+  top: 31.24px;                       /* 895.2 * sin(2deg) */
+  width: 895.2px;
+  margin: 0;
+  font-size: 144px;
+  line-height: 125px;
+  text-align: left;
+  color: var(--paper);
+  white-space: normal;                /* the one display that wraps */
+  transform: rotate(-2deg);
+  transform-origin: 0 0;
+}
+
+/* The title is a vertical gradient in the file, not flat white. The gradient
+   sits on an inner span rather than the h2 itself: Safari drops
+   background-clip:text on an element that also carries a transform, and the
+   h2 is the one being rotated. */
+.choose__g {
+  display: block;
+  background-image: linear-gradient(180deg, #464f75 0%, #545454 33%, var(--gold) 75%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.choose__avatar {
+  position: absolute;
+  left: 186.4px;                      /* 579.3 - 392.9 */
+  top: 220.4px;                       /* render 475 - 254.6 */
+  width: 230.5px; height: 345.8px;
+}
+
+/* ── Tablet and mobile share one smaller group (Figma "Group 20") ────── */
+@media (max-width: 1365.98px) {
+  .choose__group  { width: 334.4px; height: 340.5px; }
+  .choose__title  {
+    top: 11.67px;                     /* 334.4 * sin(2deg) */
+    width: 334.4px;
+    font-size: 72px; line-height: 62.5px;
+    text-align: center;
+  }
+  .choose__avatar { left: 171.6px; top: 167.1px; width: 115.2px; height: 173.4px; }
+}
+@media (max-width: 759.98px) {
+  .choose__glow   { height: 66.67%; }
+}
+
+/* Honeypot — off-screen for people, present for bots */
+.join__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+/* Reserves no space until it actually says something — the frames have no
+   status line, and an empty one pushed the whole form 22px taller. */
+/* The frame's "Error text goes here": Inter Italic 14/20, centred, #ff5053,
+   sitting just above the field set. */
+.join__status {
+  margin: 0;
+  font-size: 14px; line-height: 20px;
+  font-style: italic;
+  text-align: center;
+}
+.join__status:not(:empty) { min-height: 20px; margin-bottom: 12px; }
+.join__status[data-state="ok"]    { color: var(--gold); }
+.join__status[data-state="error"] { color: #ff5053; }
+
+/* ── Artwork, tablet AND mobile ───────────────────────────────
+   One set of sizes for every screen under 1366: the tablet slides use the
+   MOBILE artwork, matching the mobile type set they already use. Before this
+   the phone, avatar card and season fan stayed desktop-sized on tablet while
+   the small pictograms were already mobile-sized, so the two disagreed.
+
+   Every mobile frame puts the artwork at the very top of its R column
+   (measured dy 0, -0.1 and 0.2), so top is 0 here. The 6 / 37.35 / 62.05
+   offsets that used to sit on these rules were adding to the column's 28 gap
+   and pushing the artwork far below the copy. */
+@media (max-width: 1365.98px) {
+  .sec--hero .phone--hero,
+  .phone--gems, .phone--trade, .phone--hobby {
+    left: 50%; top: 0; width: 300px;
+    transform: translateX(-50%) rotate(2.5deg);
+  }
+  /* exactly half the desktop size */
+  .avatar__art   { left: 50%; top: 0; width: 322.05px; height: 524.85px; transform: translateX(-50%); }
+  .season__cards { left: 50%; top: 0; width: 330.95px; height: 417.15px; max-width: none; transform: translateX(-50%); }
+}
+
+/* ============================================================
+   SLIDE 9 — Join Grail today
+   Desktop 38:14439 (form) · 50:28128 (extended) · 50:28265 (success)
+   Tablet  50:27500 (834x1194) · iPhone 60:29889 (402x814)
+
+   The card is 920 wide and centred on desktop, full-bleed below that. All
+   three states are simply VERTICALLY CENTRED in the card — that reproduces
+   the frames' own tops exactly (233 form, 129 extended, 316 success), so
+   there is nothing to hardcode per state.
+   ============================================================ */
+.sec--join .sec__free { overflow: hidden; }
+
+/* The frame replaced the old bottom glow on this slide with a full-bleed
+   gradient vector (84:30741) that washes the whole 1680x1000, not just the
+   foot. Its stops are #204c68 at 0 alpha, #204c68 at .75, then #e0b678 back to
+   0 alpha, run along a line from (0.5, 0) to (0.667, 0.5) of the frame — which
+   is 150.6deg in CSS terms. It sits behind the card, so both the form and the
+   thank-you panel get it. */
+.sec--join .sec__free::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Sampled from the frame's own render rather than rebuilt from the gradient
+     node's matrix — the node was replaced (107:36989) and neither reading of
+     its transform reproduced what Figma actually draws. Fitting the axis to
+     the rendered pixels gives 172.5deg (residual 1.3/255), and the wash turns
+     WARM as it fades out.
+
+     The stops carry real alpha, NOT a black fill: this layer must let the
+     outgoing slide through while a transition is running. CSS interpolates
+     gradients in premultiplied alpha, so each stop is written as the measured
+     colour divided by its own alpha — the premultiplied value is then exactly
+     the measured colour (round-trip error 0/255) and the render over the black
+     body is identical, while the two ends are genuinely transparent. */
+  background: linear-gradient(172.5deg,
+    rgba(32, 76, 104, 0) 46.3%,
+    rgba(51, 153, 255, 0.020) 48.8%,
+    rgba(73, 182, 255, 0.055) 51.2%,
+    rgba(67, 177, 255, 0.090) 53.8%,
+    rgba(72, 183, 255, 0.125) 56.3%,
+    rgba(75, 187, 255, 0.161) 58.8%,
+    rgba(77, 184, 255, 0.196) 61.3%,
+    rgba(73, 186, 255, 0.231) 63.7%,
+    rgba(76, 186, 255, 0.263) 66.3%,
+    rgba(82, 187, 255, 0.294) 68.8%,
+    rgba(124, 208, 255, 0.275) 71.3%,
+    rgba(173, 234, 255, 0.243) 73.8%,
+    rgba(218, 255, 250, 0.216) 76.3%,
+    rgba(240, 255, 230, 0.196) 78.8%,
+    rgba(255, 249, 204, 0.176) 81.3%,
+    rgba(255, 229, 177, 0.153) 83.8%,
+    rgba(255, 228, 164, 0.110) 86.3%,
+    rgba(255, 221, 153, 0.059) 88.8%,
+    rgba(255, 255, 0, 0.004) 91.3%,
+    rgba(224, 182, 120, 0) 93.8%);
+}
+.sec--join .sec__free .card--narrow,
+.sec--join .stage { z-index: 1; }
+
+/* Desktop only — neither the 834 nor the 402 frame has this layer, they are
+   plain black behind the card. */
+@media (max-width: 1365.98px) {
+  .sec--join .sec__free::before { display: none; }
+}
+
+.sec--join .sec__free .card--narrow {
+  position: absolute;
+  left: 50%;
+  right: auto;                 /* .card's inset shorthand also sets right */
+  top: var(--inset);
+  bottom: var(--inset);
+  width: 920px;
+  transform: translateX(-50%);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--theme-0) 0%, var(--theme) 50%, var(--gold) 100%);
+}
+.sec--join .stage {
+  z-index: 1;
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  top: var(--inset); bottom: var(--inset);
+  width: 920px;
+}
+
+/* Content: 720x920 inside the 920 card, centred, gap 20, pad 50/40 — so the
+   copy column is 920 - 100 - 100 - 40 - 40 = 640. */
+.join__copy {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 50px 140px;
+  text-align: center;
+}
+.join__state {
+  width: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+}
+.join__state .split__heading { --head-gap: -6px; }
+.join__state .h2      { font-size: 48px; line-height: 50px; }
+.join__state .display { font-size: 144px; line-height: 150px; }
+.join__state .body    { font-size: 18px; line-height: 26px; }
+.join__state .split__body { gap: 32px; }
+.join__word { position: relative; }
+
+/* Artwork hangs off the word, measured from the heading centre and the
+   word's own top — the same rule the other slides use. */
+/* Both hang off the word at 17 degrees in the frame. The sizes here are the
+   UNROTATED box (125x96.5 and 76x76); the 147.8x128.8 / 94.9x94.9 figures the
+   file also reports are their rotated bounding boxes, which CSS derives on its
+   own. Offsets are measured from the heading centre (840) and the word top. */
+/* gold-bars.svg was exported from the BANNER instance, which is itself turned
+   15 degrees, so that rotation is already baked into the artwork and its
+   natural ink is 95x84. Slide 9 wants 17, so only the missing 2 are applied
+   here — rotating the full 17 again stacked to ~32 and the 76x76 box also
+   squashed the 95x84 artwork out of shape. Placed by centring that ink on the
+   76x76 box centre (1100.45, 394.45 in the frame). */
+.join__gold   { left: calc(50% + 212.95px); top: 75.85px; width: 95px;  height: 84px;
+                transform: rotate(-2deg); }
+.join__jacket { left: calc(50% - 311.6px); top: -59.45px; width: 125px; height: 96.5px;
+                transform: rotate(-17deg); }
+/* The success panel has its OWN gold group (50:28436, 86.6x86.2, no rotation)
+   — a different drawing from the banner pictogram, so it gets its own asset
+   rather than reusing the 15-degree one. */
+.join__gold--done { left: calc(50% - 295.2px); top: -30.8px; width: 86.6px; height: 86.2px; }
+
+/* Form: inputs 640x68, 1px between them, 3 before the button. One gap, not
+   a margin on each side — margins on both sides double up in a flex column
+   and made the stack 2px tall. */
+.join__form { width: 100%; display: flex; flex-direction: column; }
+
+/* The gradient lives on the set and shows through the 1px padding and the 1px
+   flex gaps, giving the hairline border and the dividers in one pass —
+   #e0b678 solid on the left fading to transparent on the right, as in the file. */
+.join__set {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 1px;
+  margin: -1px 0;                      /* the frame's 1px stroke does not grow
+                                          the box, so neither should this */
+  background: linear-gradient(90deg, var(--gold) 0%, rgba(224, 182, 120, 0) 100%);
+}
+.join__more { display: flex; flex-direction: column; gap: 1px; }
+.join__more[hidden] { display: none; }
+
+/* Button / L is 640x54 and sits at 1.5 degrees. The 70.7 the frame reports is
+   its rotated bounding box; CSS transforms never affect layout, so the extra
+   8.35 top and bottom is added as margin to reserve the same room. The 3 above
+   is the Wrap's own gap. */
+.join__submit, .join__again {
+  width: 100%;
+  justify-content: center;
+  height: 54px; min-height: 54px;
+  margin: 11.35px 0 8.35px;
+  transform: rotate(-1.5deg);
+}
+
+.join__footer {
+  position: absolute;
+  z-index: 1;
+  left: 50%; top: auto; bottom: 11.5px;   /* 971.5 + 17 of 1000 */
+  transform: translateX(-50%);
+  width: auto;
+  display: flex; gap: 22px;
+  font-size: 12px; line-height: 17px;
+  color: var(--blue-bright);                  /* #328195 in the frame, not white */
+}
+.join__footer span { font-style: italic; }   /* the (c) line is Inter Italic */
+.join__footer a { color: inherit; }
+.join__footer a:hover { color: var(--gold); }
+
+/* The iPhone frame tightens the pair to 11 (164 wide, not 175). */
+@media (max-width: 759.98px) {
+  .join__footer { gap: 11px; bottom: 11.5px; }   /* 785.5 + 17 of 814 */
+}
+
+/* ── Tablet and mobile: full-bleed card, mobile type ────────── */
+@media (max-width: 1365.98px) {
+  .sec--join .sec__free .card--narrow,
+  .sec--join .stage {
+    left: var(--inset); right: var(--inset);
+    width: auto; transform: none;
+  }
+  .join__copy { padding: 80px 40px; }
+  .join__state { gap: 10px; }
+  .join__state .split__heading { --head-gap: -2px; }
+  .join__state .h2      { font-size: 28px; line-height: 32px; }
+  .join__state .display { font-size: 72px; line-height: 75px; width: fit-content; }
+  .join__state .body    { font-size: 14px; line-height: 22px; max-width: 480px; }
+  .join__state .split__body { gap: 16px; }
+
+  /* Halved, and the word HUGS here so they sit on the letters. */
+  .join__gold   { left: calc(50% + 106.48px); top: 37.93px; width: 47.5px; height: 42px; }
+  .join__jacket { left: calc(50% - 155.8px); top: -29.7px; width: 62.5px; height: 48.25px; }
+  .join__gold--done { left: calc(50% - 147.6px); top: -15.4px; width: 43.3px; height: 43.1px; }
+
+  .join__form { max-width: 640px; }
+  .join__footer { bottom: 11.5px; }   /* 1165.5 + 17 of 1194 — same as desktop */
+}
+
+@media (max-width: 759.98px) {
+  /* The iPhone frame's card is 362x754 at 20,20 — 40 clear at the bottom for
+     the footer, not the usual 20. */
+  .sec--join .sec__free .card--narrow,
+  .sec--join .stage { bottom: 40px; }
+  .join__copy { padding: 70px 20px; }
+  .join__form { max-width: 322px; }
+  /* Button / M on this frame, not Button / L — 42 tall, so the floor goes. */
+  .join__submit, .join__again {
+    padding: 10px 16px 9px;
+    height: 42px; min-height: 42px;
+    margin: 7px 0 4px;
+  }
+  .join__submit .btn__t, .join__again .btn__t { font-size: 16px; line-height: 23px; }
+}
+
+
+
+/* ============================================================
+   Slide 9 form — Form / Input is 640x68, black, square corners,
+   label 14px gold at 16,24. Filled: label rises to y=10 with the
+   value at y=34. Focused: the whole field goes gold on black text.
+   ============================================================ */
+
+/* The block shifts up as the form grows, per the three frames: 185 / 81 / 268
+   of the 1000-tall frame. */
+
+.field {
+  position: relative;
+  height: 68px;
+  background: var(--ink);
+  text-align: left;
+  transition: background .18s var(--ease);
+}
+.field input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  padding: 30px 16px 10px;
+  font: inherit; font-size: 16px;
+  color: var(--text-body);
+  background: none; border: 0; outline: none;
+  transition: color .18s var(--ease);
+}
+.field label {
+  position: absolute;
+  left: 16px; top: 24px;
+  font-size: 14px; line-height: 20px;
+  color: var(--gold);
+  pointer-events: none;
+  transition: top .18s var(--ease), color .18s var(--ease);
+}
+/* empty and unfocused → label sits centred as the placeholder */
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label { top: 10px; }
+
+.field:focus-within { background: var(--gold); }
+.field:focus-within label { color: var(--ink); }
+.field:focus-within input { color: var(--ink); }
+
+.join__state--done[hidden], .join__state--form[hidden] { display: none; }
+
+
+/* ============================================================
+   SLIDE 2 — How Grail works
+   Desktop 24:10412 (1680x1000) · Tablet 60:30084 (834x1194)
+   iPhone  50:23981 (402x814)
+
+   Fixed px, like every other slide. The title is 144/125 on desktop AND
+   tablet and 72/62.5 on mobile; the avatar is 171.9x321.3 full size and
+   exactly half on mobile. Only the vertical placement is proportional,
+   because the three frames put the composition at different heights.
+   ============================================================ */
+.sec--how .sec__free { overflow: hidden; }
+
+.how__glow {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 50%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* Title + avatar are ONE rigid group, carrying the Figma offsets between
+   them (Figma group "gr": 548.8x631 desktop, exactly half below 1366).
+   The group is centred on both axes at every breakpoint, so the avatar can
+   never drift away from the word — in the frame its raised arms deliberately
+   overlap the last text line. Children are placed by their ink: both use
+   translateX(-50%), so `left` is a centre, not an edge. */
+.how__group {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 548.8px;
+  height: 631px;
+}
+
+/* No transform here on purpose: Safari drops background-clip:text under one,
+   and the 536-wide box happens to start exactly on the group's left edge
+   (centre 268 - 268), so plain left/width does the job. */
+.how__title {
+  position: absolute;
+  left: 0;
+  right: auto;
+  top: 18.7px;                       /* 252.7 - 234 */
+  width: 536px;
+  margin: 0;
+  text-align: center;
+  font-size: 144px;
+  line-height: 125px;
+  z-index: 1;
+}
+
+.how__avatar {
+  position: absolute;
+  left: 221px;                       /* render 787 - 566 */
+  top: 310.2px;                      /* render 544.2 - 234 */
+  width: 178.1px; height: 321.3px;   /* both hands restored in the file */
+  z-index: 2;
+}
+
+/* ── Tablet and mobile: the same group at exactly half scale ── */
+@media (max-width: 1365.98px) {
+  .how__group  { width: 274.4px; height: 315.5px; }
+  .how__title  {
+    left: 0; top: 9.35px; width: 268px;
+    font-size: 72px; line-height: 62.5px;
+  }
+  .how__avatar { left: 110.5px; top: 155.1px; width: 89.05px; height: 160.4px; }
+}
+@media (min-width: 760px) and (max-width: 1365.98px) {
+  .how__glow { height: 50%; }        /* 597 of 1194 */
+}
+@media (max-width: 759.98px) {
+  .how__glow { height: 66.7%; }      /* 543 of 814, from 33.3% down */
+}

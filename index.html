@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grail — Own the best cards</title>
+<meta name="description" content="We love collecting, and we want everyone to be able to own the best cards around. That's why we're building Grail.">
+<meta name="theme-color" content="#000000">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon2x.png">
+<link rel="apple-touch-icon" href="assets/img/favicon2x.png">
+
+<link rel="stylesheet" href="css/style.css?v=64">
+
+<link rel="preload" as="image" href="assets/img/phone-frame.png" fetchpriority="high">
+<link rel="preload" as="image" href="assets/img/logo.svg">
+
+<script>
+/* Add .js before first paint so the deck starts hidden and slides in,
+   rather than flashing all nine stacked. No scale to compute any more —
+   the layout is fluid, so CSS alone gets it right on the first frame. */
+(function () {
+  var d = document.documentElement;
+  d.className = (d.className ? d.className + " " : "") + "js";
+})();
+</script>
+</head>
+<body>
+
+
+<!-- ── Fixed chrome ─────────────────────────────────────────── -->
+<header class="chrome">
+  <a class="chrome__logo" href="#s1" aria-label="Grail — home">
+    <img src="assets/img/logo.svg" alt="" width="69" height="40" fetchpriority="high">
+  </a>
+
+  <nav class="chrome__nav" aria-label="Primary">
+    <a class="chrome__link chrome__link--how" href="#s2">How it Works</a>
+    <!-- TODO(link): Grail University has no destination yet — no hyperlink is
+         set on it anywhere in the Figma file. Replace href and add
+         target="_blank" rel="noopener" once the URL exists. The same TODO is
+         on the "Open Grail University" button in slide 7. -->
+    <a class="chrome__link chrome__link--uni" href="#" data-todo-link="grail-university">Grail University<span class="chrome__arr" aria-hidden="true">↗</span></a>
+  </nav>
+
+  <a class="btn btn--m" href="#s9">
+    <span class="btn__t">Sign up</span>
+    <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
+      <path d="M0 2H13V15L0 2Z" fill="url(#fold-m)"></path>
+      <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
+      <defs><linearGradient id="fold-m" x1="13" y1="2" x2="0" y2="15" gradientUnits="userSpaceOnUse">
+        <stop offset=".1" stop-color="#fff"></stop><stop offset=".4" stop-color="#000"></stop>
+        <stop offset=".5" stop-color="#fff" stop-opacity="0"></stop>
+      </linearGradient></defs>
+    </svg>
+  </a>
+</header>
+
+<nav class="dots" aria-label="Section navigation">
+  <button class="dots__dot" type="button" data-go="s1" aria-label="Welcome to Grail"></button>
+  <button class="dots__dot" type="button" data-go="s2" aria-label="How Grail works"></button>
+  <button class="dots__dot" type="button" data-go="s3" aria-label="Collect gems"></button>
+  <button class="dots__dot" type="button" data-go="s4" aria-label="Customize your avatar"></button>
+  <button class="dots__dot" type="button" data-go="s5" aria-label="Trade and sell gems"></button>
+  <button class="dots__dot" type="button" data-go="s6" aria-label="End of season"></button>
+  <button class="dots__dot" type="button" data-go="s7" aria-label="Grail University"></button>
+  <button class="dots__dot" type="button" data-go="s8" aria-label="We choose you"></button>
+  <button class="dots__dot" type="button" data-go="s9" aria-label="Join Grail today"></button>
+</nav>
+
+<!-- ── Deck ─────────────────────────────────────────────────── -->
+<main class="deck" id="deck">
+
+  <!-- 1 · Hero ------------------------------------------------ -->
+  <section class="sec sec--hero sec--split" id="s1" data-theme="blue" aria-label="Welcome to Grail">
+    <div class="card">
+      <div class="stage">
+
+        <div class="split__col split__col--l">
+        <div class="split__copy" data-reveal>
+          <div class="split__heading">
+            <p class="h2 hero__kicker">Welcome to</p>
+            <h1 class="display hero__wordmark"><span>Gra</span><i class="hero__gap"></i><span>l</span><span class="hero__card fade-cycle"><img src="assets/img/card-clark.jpg" alt="A graded Caitlin Clark signature trading card" width="168" height="270" fetchpriority="high" decoding="async"><img src="assets/img/card-mantle.jpg" alt="A graded #311 Mickey Mantle trading card" width="168" height="270" decoding="async"><img src="assets/img/card-dart.jpg" alt="A graded Jaxson Dart trading card" width="168" height="270" decoding="async"></span></h1>
+
+          </div>
+
+          <div class="split__body">
+            <p class="body">We love collecting, and we want everyone to be able to own the
+              <span class="gold">best cards</span> around. That&rsquo;s why we&rsquo;re building Grail.</p>
+
+            <div class="hero__actions">
+              <a class="btn btn--l btn--gold btn--tilt-l" href="#s9">
+                <span class="btn__t">Get early access</span>
+                <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M0 2H13V15L0 2Z" fill="url(#fold-1)"></path>
+                  <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
+                  <defs><linearGradient id="fold-1" x1="13" y1="2" x2="0" y2="15" gradientUnits="userSpaceOnUse">
+                    <stop offset=".1" stop-color="#E0B678"></stop><stop offset=".4" stop-color="#000"></stop>
+                    <stop offset=".5" stop-color="#fff" stop-opacity="0"></stop>
+                  </linearGradient></defs>
+                </svg>
+              </a>
+              <a class="btn btn--l btn--blue btn--tilt-r" href="#s2">
+                <span class="btn__t">How grail works</span>
+                <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M0 2H13V15L0 2Z" fill="url(#fold-2)"></path>
+                  <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
+                  <defs><linearGradient id="fold-2" x1="13" y1="2" x2="0" y2="15" gradientUnits="userSpaceOnUse">
+                    <stop offset=".1" stop-color="#204C68"></stop><stop offset=".4" stop-color="#000"></stop>
+                    <stop offset=".5" stop-color="#fff" stop-opacity="0"></stop>
+                  </linearGradient></defs>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="split__col split__col--r">
+        <div class="phone phone--hero" data-reveal>
+          <div class="phone__screen">
+            <!-- Drop the export at assets/video/chest-reveal.mp4 (see README).
+                 data-src, not src: js/main.js only loads it once the hero is on
+                 screen, so it never competes with first paint. -->
+            <video class="phone__video" muted playsinline preload="none"
+                   poster="assets/img/hero-poster.jpg"
+                   aria-label="Opening a Grail chest">
+              <source data-src="assets/video/reveal_short.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="phone__frame">
+            <img src="assets/img/phone-frame.png" alt="" width="1234" height="2484" fetchpriority="high">
+          </div>
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · How Grail works ------------------------------------- -->
+  <section class="sec sec--how" id="s2" data-theme="slate" aria-label="How Grail works">
+    <div class="sec__free">
+      <img class="how__glow" data-src="assets/img/glow.png" alt="" width="1680" height="500" decoding="async">
+      <!-- The trailing spaces are in the Figma text and shift each centred
+           line left, so they are preserved here (white-space: pre). -->
+      <div class="how__group" data-reveal>
+        <h2 class="display how__title"><span class="how__w"><span class="how__g">how </span></span><span class="how__w"><span class="how__g">grail </span></span><span class="how__w"><span class="how__g">works</span></span></h2>
+        <img class="how__avatar" data-src="assets/img/avatar-how.png?v=2x" alt="A Grail avatar with arms raised"
+             width="357" height="643" decoding="async">
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 3 · Collect gems -->
+  <section class="sec sec--gems sec--split sec--flip" id="s3" data-theme="grey" aria-label="Collect gems">
+    <div class="card">
+      <div class="stage">
+
+        <div class="split__col split__col--l">
+          <div class="split__copy" data-reveal>
+            <div class="split__heading">
+              <p class="h2">Collect</p>
+              <h2 class="display gold">gems<img class="split__art gems__icon" data-src="assets/img/gem2x.png" alt="" width="58" height="58" decoding="async"></h2>
+                          </div>
+            <div class="split__body">
+              <p class="body">Each season, we release a host of world-class cards into chests, ready for our users to find. Each card is <span class="gold">split into gems</span>, allowing you to own a part of these iconic cards, along with other members of the community.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="split__col split__col--r">
+        <div class="phone phone--gems" data-reveal>
+          <div class="phone__screen">
+            <img class="phone__layer" data-src="assets/img/gems-collect.jpg" alt="The Grail app showing a collection of gems" width="804" height="1748" decoding="async">
+          </div>
+          <div class="phone__frame">
+            <img data-src="assets/img/phone-frame-grey.png" alt="" width="1234" height="2484" decoding="async">
+          </div>
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Customize your avatar -->
+  <section class="sec sec--avatar sec--split" id="s4" data-theme="slate" aria-label="Customize your avatar">
+    <div class="card">
+      <div class="stage">
+
+        <div class="split__col split__col--l">
+          <div class="split__copy" data-reveal>
+            <div class="split__heading">
+              <p class="h2">Customize Your</p>
+              <h2 class="display gold">avatar<img class="split__art avatar__beanie" data-src="assets/img/beanie2x.png" alt="" width="174" height="138" decoding="async"></h2>
+              <p class="h2">And Join The Community</p>
+                          </div>
+            <div class="split__body">
+              <p class="body">The biggest part of Grail is our community; a friendly group of like-minded collectibles lovers. Customise your avatar using cosmetics, and chat with other users about the <span class="gold">hobby you love</span>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="split__col split__col--r">
+        <div class="avatar__art" data-reveal>
+          <img data-src="assets/img/avatar-card-full.png" alt="A Grail avatar in a USA jersey and yellow beanie, framed by a zebra-print card"
+               width="1288" height="2099" decoding="async">
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 5 · Trade and sell your gems -->
+  <section class="sec sec--trade sec--split sec--flip" id="s5" data-theme="blue" aria-label="Trade and sell your gems">
+    <div class="card">
+      <div class="stage">
+
+        <div class="split__col split__col--l">
+          <div class="split__copy" data-reveal>
+            <div class="split__heading">
+              <p class="h2">Trade and Sell</p>
+              <h2 class="display gold">your<img class="split__art trade__icon" data-src="assets/img/streak2x.png" alt="" width="46" height="88" decoding="async"></h2>
+              <p class="h2">Gems and Cosmetics</p>
+                          </div>
+            <div class="split__body">
+              <p class="body"><span class="gold">We empower our users</span> to build collections in the way they want to. Trade or sell your gems with the community, and build a collection you&rsquo;re proud of.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="split__col split__col--r">
+        <div class="phone phone--trade" data-reveal>
+          <div class="phone__screen">
+            <img class="phone__layer" data-src="assets/img/gems-shop.jpg" alt="The Grail app shop showing gems and cosmetics" width="804" height="1748" decoding="async">
+          </div>
+          <div class="phone__frame">
+            <img data-src="assets/img/phone-frame.png" alt="" width="1234" height="2484" decoding="async">
+          </div>
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · End of season -->
+  <section class="sec sec--season sec--split" id="s6" data-theme="slate" aria-label="End of season">
+    <div class="card">
+      <div class="stage">
+
+        <div class="split__col split__col--l">
+          <div class="split__copy" data-reveal>
+            <div class="split__heading">
+              <p class="h2 season__l1">Cards Are Distributed at the End of</p>
+              <!-- The dice sits in place of the O, so the letterform itself drops out —
+                   same treatment as the "o" in HOBBY on slide 7. -->
+              <h2 class="display gold">Seas<span class="letter-out">o</span>n<img class="split__art season__dice" data-src="assets/img/dice2x.png" alt="" width="120" height="135" decoding="async"></h2>
+                          </div>
+            <div class="split__body">
+              <p class="body">At the end of each season, each gem holder votes on what they&rsquo;d like to do with their card. If holders choose Randomise, one lucky gem holder takes <span class="gold">full ownership</span>.</p>
+              <p class="body">If Auction is chosen, we sell the card with one of our auction partners and transfer all proceeds to the gem holders. We then start the next season, with a whole new host of world-class cards.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="split__col split__col--r">
+        <img class="season__cards" data-src="assets/img/season-cards-full.webp" alt="A fan of graded trading cards" width="1324" height="1669" decoding="async" data-reveal>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · Grail University -->
+  <section class="sec sec--hobby sec--split sec--flip" id="s7" data-theme="blue" aria-label="Grail University">
+    <div class="card">
+      <div class="stage">
+
+        <div class="split__col split__col--l">
+          <div class="split__copy" data-reveal>
+            <div class="split__heading">
+              <p class="h2">Learn About Your</p>
+              <!-- The heart sits in place of the O, so the letterform drops out and
+                   only the artwork reads. Same on SEASON. -->
+              <h2 class="display gold">h<span class="letter-out">o</span>bby<img class="split__art hobby__heart" data-src="assets/img/heart2x.png" alt="" width="131" height="114" decoding="async"></h2>
+              <p class="h2">With Grail University</p>
+                          </div>
+            <div class="split__body">
+              <p class="body">&ldquo;<span class="gold">Knowledge is power</span>&rdquo; as the old adage goes, and we believe that nowhere is this saying more true than in collecting. We&rsquo;ve put together bespoke, free learning to help you get the most out of your hobby, whether you take it casually, or seriously.</p>
+              <!-- TODO(link): same pending destination as the header's Grail
+                   University link — see the note in the page header. No href
+                   until then, so it is inert rather than a dead anchor. -->
+              <a class="btn btn--l btn--gold btn--tilt-l" data-todo-link="grail-university">
+                <span class="btn__t">Open Grail University</span>
+                <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M0 2H13V15L0 2Z" fill="url(#fold-3)"></path>
+                  <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
+                  <defs><linearGradient id="fold-3" x1="13" y1="2" x2="0" y2="15" gradientUnits="userSpaceOnUse">
+                    <stop offset=".1" stop-color="#E0B678"></stop><stop offset=".4" stop-color="#000"></stop>
+                    <stop offset=".5" stop-color="#fff" stop-opacity="0"></stop>
+                  </linearGradient></defs>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="split__col split__col--r">
+        <div class="phone phone--hobby" data-reveal>
+          <div class="phone__screen fade-cycle">
+            <img class="phone__layer phone__layer--a" data-src="assets/img/gu-list.jpg" alt=""
+                 width="1070" height="2327" decoding="async">
+            <img class="phone__layer phone__layer--b" data-src="assets/img/gu-article.jpg"
+                 alt="The Grail University lesson &lsquo;How trading cards work&rsquo;"
+                 width="1070" height="2327" decoding="async">
+            <img class="phone__layer phone__layer--c" data-src="assets/img/gu-gold.jpg"
+                 alt="Finishing a Grail University topic and earning 100 gold"
+                 width="1070" height="2327" decoding="async">
+          </div>
+          <div class="phone__frame">
+            <img src="assets/img/phone-frame.png" alt="" width="1234" height="2484" decoding="async">
+          </div>
+        </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 8 · We choose you ---------------------------------------- -->
+  <section class="sec sec--choose" id="s8" data-theme="blue" aria-label="We choose you">
+    <div class="sec__free">
+      <img class="choose__glow" data-src="assets/img/glow.png" alt="" width="1680" height="500" decoding="async">
+      <div class="choose__group" data-reveal>
+        <h2 class="display choose__title"><span class="choose__g">We choose you!</span></h2>
+        <img class="choose__avatar" data-src="assets/img/avatar-small.png?v=2x" alt="A Grail avatar waving" width="461" height="692" decoding="async">
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · Join Grail today ------------------------------------- -->
+  <section class="sec sec--join" id="s9" data-theme="blue" data-state="form" aria-label="Join Grail today">
+    <div class="sec__free">
+      <div class="card card--narrow"></div>
+      <div class="stage">
+        <div class="join__copy" data-reveal>
+
+          <div class="join__state join__state--form">
+            <div class="split__heading">
+              <p class="h2">Join Grail</p>
+              <h2 class="display gold join__word">today
+                <img class="split__art join__gold" data-src="assets/img/gold-bars.svg" alt="" width="95" height="84" decoding="async">
+                <img class="split__art join__jacket" data-src="assets/img/jacket.png" alt="" width="250" height="192" decoding="async">
+              </h2>
+            </div>
+            <div class="split__body">
+            <p class="body join__lede">Be the first to hear about our launch. Sign up now and you&rsquo;ll get a
+              <span class="gold">Founding Member Cosmetic</span>, and <span class="gold">500 free GrailGold</span>
+              to spend in-app on other Cosmetics or Live Break Tickets.</p>
+
+            <form class="join__form" action="signup.php" method="post" novalidate>
+              <p class="join__hp" aria-hidden="true">
+                <label>Company <input type="text" name="company" tabindex="-1" autocomplete="off"></label>
+              </p>
+              <p class="join__status" role="status" aria-live="polite"></p>
+
+              <!-- Figma "Form / Set": one box carrying the gold gradient, with
+                   the black inputs inset 1px so the same gradient reads as
+                   both the outer hairline and the divider between fields. -->
+              <div class="join__set">
+                <div class="field">
+                  <input id="f-name" type="text" name="name" autocomplete="name" placeholder=" " required>
+                  <label for="f-name">Your Name</label>
+                </div>
+                <div class="field">
+                  <input id="f-email" type="email" name="email" autocomplete="email" placeholder=" " required>
+                  <label for="f-email">Your Email</label>
+                </div>
+
+                <!-- Revealed once a usable email is typed, so the first view is
+                     just two fields rather than five. -->
+                <div class="join__more" hidden>
+                  <div class="field">
+                    <input id="f-collect" type="text" name="collect" placeholder=" ">
+                    <label for="f-collect">What do you collect? &middot; Optional</label>
+                  </div>
+                  <div class="field">
+                    <input id="f-team" type="text" name="team" placeholder=" ">
+                    <label for="f-team">Favourite team &middot; Optional</label>
+                  </div>
+                  <div class="field">
+                    <input id="f-since" type="text" name="since" placeholder=" ">
+                    <label for="f-since">How long have you been collecting for? &middot; Optional</label>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn--l btn--gold join__submit" type="submit">
+                <span class="btn__t">Sign up</span>
+                <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
+                  <path d="M0 2H13V15L0 2Z" fill="url(#fold-9)"></path>
+                  <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
+                  <defs><linearGradient id="fold-9" x1="13" y1="2" x2="0" y2="15" gradientUnits="userSpaceOnUse">
+                    <stop offset=".1" stop-color="#E0B678"></stop><stop offset=".4" stop-color="#000"></stop>
+                    <stop offset=".5" stop-color="#fff" stop-opacity="0"></stop>
+                  </linearGradient></defs>
+                </svg>
+              </button>
+            </form>
+            </div>
+          </div>
+
+          <div class="join__state join__state--done" hidden>
+            <div class="split__heading">
+              <p class="h2">Thanks for</p>
+              <h2 class="display gold join__word">joining!
+                <img class="split__art join__gold--done" data-src="assets/img/gold-done.png" alt="" width="87" height="86" decoding="async">
+              </h2>
+            </div>
+            <div class="split__body">
+            <p class="body join__lede">You&rsquo;ll be getting a <span class="gold">Founding Member Cosmetic</span>, and
+              <span class="gold">500 free GrailGold</span> to spend in-app on other Cosmetics or Live Break Tickets.</p>
+            <button class="btn btn--l btn--gold join__again" type="button">
+              <span class="btn__t">Sign up again</span>
+              <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
+                <path d="M0 2H13V15L0 2Z" fill="url(#fold-10)"></path>
+                <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
+                <defs><linearGradient id="fold-10" x1="13" y1="2" x2="0" y2="15" gradientUnits="userSpaceOnUse">
+                  <stop offset=".1" stop-color="#E0B678"></stop><stop offset=".4" stop-color="#000"></stop>
+                  <stop offset=".5" stop-color="#fff" stop-opacity="0"></stop>
+                </linearGradient></defs>
+              </svg>
+            </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- Sits below the card in the frame (971.5 of 1000, card ends at 960),
+           so it is a sibling of the card, not a child of it. -->
+      <p class="join__footer">
+        <span>&copy; 2026 Grail</span>
+        <a href="#">Privacy Policy</a>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Promo banner ─────────────────────────────────────────
+     Fixed bottom-left, hidden until 4s after load, dismissed for good
+     via the X. Sits outside .deck so it never moves with the slides. -->
+<aside class="promo" id="promo" aria-live="polite" hidden>
+  <div class="promo__inner">
+    <!-- The whole banner is the call to action, not just START NOW. This sits
+         under the close button so dismissing still works. -->
+    <a class="promo__hit" href="#s9" aria-label="Sign up now and get a Founding Member Cosmetic and 500 GrailGold"></a>
+    <img class="promo__gold" src="assets/img/gold-bars.svg" alt="" width="95" height="84" decoding="async">
+    <img class="promo__jacket" src="assets/img/jacket.png" alt="" width="250" height="192" decoding="async">
+    <p class="promo__kicker">Sign up now and receive a</p>
+    <p class="promo__headline">Founding Member Cosmetic, and 500 GrailGold</p>
+    <button class="promo__close" id="promo-close" type="button" aria-label="Dismiss this offer">
+      <svg viewBox="0 0 30 32" fill="none" aria-hidden="true" focusable="false">
+        <path d="M9.77124 24.6506L19.2936 7.3077M19.8868 24.2952L9.17802 7.66312" stroke="url(#promo-x)" stroke-width="1.5" stroke-linecap="round"></path>
+        <defs><linearGradient id="promo-x" x1="14.2359" y1="7.48651" x2="14.829" y2="24.4718" gradientUnits="userSpaceOnUse">
+          <stop stop-color="white"></stop><stop offset="1" stop-color="white" stop-opacity="0.25"></stop>
+        </linearGradient></defs>
+      </svg>
+    </button>
+  </div>
+
+  <a class="btn btn--m promo__cta" href="#s9">
+    <span class="btn__t">Start now</span>
+    <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
+      <path d="M0 2H13V15L0 2Z" fill="url(#fold-p)"></path>
+      <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
+      <defs><linearGradient id="fold-p" x1="13" y1="2" x2="0" y2="15" gradientUnits="userSpaceOnUse">
+        <stop offset=".1" stop-color="#fff"></stop><stop offset=".4" stop-color="#000"></stop>
+        <stop offset=".5" stop-color="#fff" stop-opacity="0"></stop>
+      </linearGradient></defs>
+    </svg>
+  </a>
+</aside>
+
+<!-- ?v= is a cache buster: bump it whenever you FTP a new css/js up,
+     or browsers keep serving the old file. -->
+<script src="js/main.js?v=64" defer></script>
+</body>
+</html>
