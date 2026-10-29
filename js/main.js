@@ -57,6 +57,14 @@
   if (CONFIG.phoneCrossfade && !reduced) doc.dataset.guCrossfade = "on";
 
   var deck = document.getElementById("deck");
+
+  /* The deck moves by transforms, never by scrolling. CSS clips it so a
+     #fragment cannot scroll it; this holds it at 0 in browsers without
+     overflow: clip, and catches focus jumps too. */
+  deck.addEventListener("scroll", function () {
+    if (deck.scrollTop || deck.scrollLeft) deck.scrollTop = deck.scrollLeft = 0;
+  });
+  deck.scrollTop = deck.scrollLeft = 0;
   var sections = [].slice.call(document.querySelectorAll(".sec"));
   var dots = [].slice.call(document.querySelectorAll(".dots__dot"));
   var byId = {};
@@ -196,7 +204,7 @@
   });
 
   function render(from, to) {
-    var animate = [from, to];
+    var animate = from < 0 ? [] : [from, to];   // opening render: nothing moves
 
     sections.forEach(function (s, i) {
       if (animate.indexOf(i) === -1) s.classList.add("no-trans");
@@ -339,8 +347,14 @@
     applyScroll(cur, scrollPos);
   }, { passive: true });
 
-  /* First paint — after SCROLLS exists, since render() seeds the scroll. */
-  render(0, 0);
+  /* First paint — after SCROLLS exists, since render() seeds the scroll.
+     A hash opens straight on that slide: the Terms and Privacy pages link
+     back to index.html#s2 (How it Works) and #s9 (Sign up). from = -1 puts
+     every slide in place without a transition, so the opening slide is
+     simply there — its contents still reveal as usual. */
+  var startAt = location.hash ? indexOfId(location.hash.slice(1)) : -1;
+  if (startAt > 0) cur = startAt;
+  render(-1, cur);
 
   /* ── 6 · Input ───────────────────────────────────────────── */
 
@@ -475,6 +489,13 @@
     if (i < 0) return;
     e.preventDefault();
     go(i);
+  });
+
+  /* Back/forward, or a hash typed into the address bar, moves the deck too —
+     a same-page hash change never reloads, so the first-paint check misses it. */
+  addEventListener("hashchange", function () {
+    var i = indexOfId(location.hash.slice(1));
+    if (i >= 0) go(i);
   });
 
   /* ── 7 · Promo banner ────────────────────────────────────

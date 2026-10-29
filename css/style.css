@@ -197,8 +197,19 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 [data-nav="how"] .chrome__link--how { color: var(--gold); font-style: italic; }
 .chrome__link--uni { color: var(--theme-nav); transition: color var(--slide-dur, 600ms) var(--ease), opacity .2s; }
 
-.chrome .btn--m { position: absolute; right: 18.97px; top: 17.49px; transform: rotate(3deg); }
+/* Figma positions these stickers by their ROTATED bounds; the numbers below
+   are the unrotated boxes (CSS rotates about the centre) worked back from
+   them. Bar: 182.14 wide, items centred, 4px overlap between the two. */
+.chrome .btn--m { position: absolute; right: 20.56px; top: 20px; transform: rotate(3deg); }
 .chrome .btn--m:hover { transform: rotate(3deg) translate(1px, -2px); }
+
+/* Log in — the same M sticker, but a gold ring on black with gold italic text,
+   and no dog-ear: the Figma button hides its Corner layer. 86x42, sitting
+   0.73px under Sign up's left edge (they overlap slightly, as drawn). */
+.btn--ghost { background: var(--gold); --btn-fill: var(--ink); --btn-text: var(--gold);
+              clip-path: none; }
+.chrome .btn--ghost { position: absolute; right: 115.13px; top: 20px; transform: rotate(-1.5deg); }
+.chrome .btn--ghost:hover { transform: rotate(-1.5deg) translate(1px, -2px); }
 
 /* ── Dot rail ───────────────────────────────────────────── */
 /* 9 dots per the Section 1 template: 6px, 18px pitch, active 6x30 gold. */
@@ -242,7 +253,10 @@ button.dots__dot:hover { opacity: .65; }
    puts the 40px-inset card at 120,86 at 1440x828, which is state B.
    600ms forward, 300ms back, ease-in-out, per the prototype's reactions. */
 .js body { overflow: hidden; }
-.js .deck { position: fixed; inset: 0; overflow: hidden; }
+/* clip, not just hidden: a hidden box is still a scroll container, so arriving
+   on index.html#s2 the browser scrolled the deck to the fragment and left the
+   slide a screen off. A clipped box cannot be scrolled at all. */
+.js .deck { position: fixed; inset: 0; overflow: hidden; overflow: clip; }
 
 .js .sec {
   position: absolute;
@@ -430,9 +444,18 @@ button.dots__dot:hover { opacity: .65; }
     font-size: 14px; gap: 20px;
   }
   .chrome__link--how { display: none; }   /* the iPhone frame keeps only one link */
-  .chrome .btn--m { right: var(--inset); top: 50%; transform: translateY(-50%) rotate(3deg); }
-  .chrome .btn--m:hover { transform: translateY(-50%) rotate(3deg) translate(1px, -2px); }
-  .chrome .btn--m .btn__t { font-size: 14px; }
+  /* iPhone frame: the same 182.14 bar at x 205, y 18 of 402. */
+  .chrome .btn--m { right: 15.9px; top: 16px; transform: rotate(3deg); }
+  .chrome .btn--m:hover { transform: rotate(3deg) translate(1px, -2px); }
+  .chrome .btn--ghost { right: 110.47px; top: 16px; transform: rotate(-1.5deg); }
+  .chrome .btn--ghost:hover { transform: rotate(-1.5deg) translate(1px, -2px); }
+}
+
+/* The new iPhone header is logo + Log in + Sign up and nothing else — the
+   Grail University link is not on that frame at all, which is also what stops
+   it colliding with the buttons at 402px. Tablet still shows it. */
+@media (max-width: 759.98px) {
+  .chrome__nav { display: none; }
 
   .dots { width: 20px; gap: 10px; }
   .dots__dot { width: 4px; height: 4px; }
@@ -532,6 +555,23 @@ button.dots__dot:hover { opacity: .65; }
 .phone__screen.fade-cycle > *:first-child { opacity: 1; }
 [data-gu-crossfade] .phone__screen.fade-cycle > *:first-child { opacity: 0; }
 
+.season__gem { display: grid; }
+.season__gem img { width: 100%; height: 100%; display: block; grid-area: 1 / 1; }
+
+/* Six gems on the same 5s slot as the three-up cycles (1s in, 4s held, 1s out),
+   so the whole set takes 30s instead of 15s and the rhythm stays identical. */
+@keyframes fade-cycle-6 {
+  0%      { opacity: 0; }
+  3.33%   { opacity: 1; }   /* 1s  — faded in  */
+  16.67%  { opacity: 1; }   /* 5s  — 4s held   */
+  20%     { opacity: 0; }   /* 6s  — faded out */
+  100%    { opacity: 0; }
+}
+.fade-cycle--6 > * { animation: fade-cycle-6 30s linear infinite; }
+.fade-cycle--6 > *:nth-child(4) { animation-delay: 15s; }
+.fade-cycle--6 > *:nth-child(5) { animation-delay: 20s; }
+.fade-cycle--6 > *:nth-child(6) { animation-delay: 25s; }
+
 .fade-cycle > *:nth-child(1) { animation-delay:  0s; }
 .fade-cycle > *:nth-child(2) { animation-delay:  5s; }
 .fade-cycle > *:nth-child(3) { animation-delay: 10s; }
@@ -540,6 +580,9 @@ button.dots__dot:hover { opacity: .65; }
 
 @media (prefers-reduced-motion: reduce) {
   .fade-cycle > * { animation: none; opacity: 0; }
+  /* needs its own line: .fade-cycle--6 > * outranks .fade-cycle > * on
+     specificity, so without this the gems would keep cycling. */
+  .fade-cycle--6 > * { animation: none; }
   .fade-cycle > *:nth-child(1) { opacity: 1; }
 }
 
@@ -558,7 +601,7 @@ button.dots__dot:hover { opacity: .65; }
 
 /* A letter the artwork stands in for: it keeps its place in the line so the
    word still sets correctly, but paints nothing — otherwise the gold glyph
-   shows through behind the heart on HOBBY and the dice on SEASON. */
+   shows through behind the heart on HOBBY and the gem on SEASON. */
 .letter-out { color: transparent; }
 /* Without height:auto the img keeps its HTML height attribute and stretches;
    this has to sit outside the desktop block so tablet and mobile get it. */
@@ -567,7 +610,10 @@ button.dots__dot:hover { opacity: .65; }
    screen is too short to show all of it, the bottom is simply hidden by the
    card's clip. On a large screen the whole thing is visible. No object-fit,
    no max-height: fitting to the column would be scaling. */
-.avatar__art img { width: 100%; height: 100%; display: block; }
+.avatar__art { display: grid; }
+/* The three cards stack in one grid cell so the cross-fade swaps them in
+   place; position/size still come from the breakpoint rules alone. */
+.avatar__art img { width: 100%; height: 100%; display: block; grid-area: 1 / 1; }
 
 /* Inline pictograms hang off the BIG WORD, not the heading. Anchoring them
    to the heading meant that when the white lines above rewrapped — which they
@@ -581,7 +627,8 @@ button.dots__dot:hover { opacity: .65; }
 .gems__icon    { left: calc(50% + 99px);  top: 77px;  width: 58px;  height: 58px; }
 .avatar__beanie{ left: calc(50% + 199px); top: -24px; width: 84px;  height: 66px; }
 .trade__icon   { left: calc(50% - 72px);  top: 14px;  width: 46px;  height: 88px; }
-.season__dice  { left: calc(50% + 79px);  top: 8px;   width: 120px; height: 135px; }
+.season__gem   { left: calc(50% + 76.54px); top: 11.54px; width: 120px; height: 120px;
+                 transform: rotate(-9.5deg); }   /* frame: 120x120, rot -9.5 */
 .hobby__heart  { left: calc(50% - 148px); top: 13px;  width: 129px; height: auto;
                  transform: rotate(-7.5deg); }   /* frame: 129x111.9, rot 7.5 */
 
@@ -672,7 +719,8 @@ button.dots__dot:hover { opacity: .65; }
   .gems__icon    { left: calc(50% + 49px);  top: 38.5px; width: 29px;   height: 29px; }
   .avatar__beanie{ left: calc(50% + 99.5px);top: -12px;  width: 42px;   height: 33px; }
   .trade__icon   { left: calc(50% - 36px);  top: 7px;    width: 23px;   height: 44px; }
-  .season__dice  { left: calc(50% + 39.5px);top: 4px;    width: 60px;   height: 67.5px; }
+  .season__gem   { left: calc(50% + 38.29px);top: 9.29px; width: 58.32px;height: 58.32px;
+                   transform: rotate(-9.5deg); }
   .hobby__heart  { left: calc(50% - 74px);  top: 6.5px;  width: 64.5px; height: auto;
                    transform: rotate(-7.5deg); }
 
@@ -717,7 +765,8 @@ button.dots__dot:hover { opacity: .65; }
   .gems__icon    { left: calc(50% + 49px);  top: 38.5px; width: 29px;   height: 29px; }
   .avatar__beanie{ left: calc(50% + 99.5px);top: -12px;  width: 42px;   height: 33px; }
   .trade__icon   { left: calc(50% - 36px);  top: 7px;    width: 23px;   height: 44px; }
-  .season__dice  { left: calc(50% + 39.5px);top: 4px;    width: 60px;   height: 67.5px; }
+  .season__gem   { left: calc(50% + 38.29px);top: 9.29px; width: 58.32px;height: 58.32px;
+                   transform: rotate(-9.5deg); }
   .hobby__heart  { left: calc(50% - 74px);  top: 6.5px;  width: 64.5px; height: auto;
                    transform: rotate(-7.5deg); }
 
@@ -917,8 +966,10 @@ button.dots__dot:hover { opacity: .65; }
 @media (min-width: 760px) and (max-width: 1365.98px) {
   .chrome__nav { left: 50%; top: 30px; transform: translateX(-50%); font-size: 16px; gap: 38px; }
   .chrome__link--how { display: inline; }
-  .chrome .btn--m { top: 17.49px; transform: rotate(3deg); }
+  .chrome .btn--m { right: 20px; top: 20px; transform: rotate(3deg); }
   .chrome .btn--m:hover { transform: rotate(3deg) translate(1px, -2px); }
+  /* The tablet frames in Figma carry Sign up on its own — no Log in. */
+  .chrome .btn--ghost { display: none; }
   .chrome__logo { left: 24px; top: 24px; }
   .chrome__logo img { width: 69px; height: 40px; }
   .dots { width: 40px; gap: 12px; }
@@ -1261,6 +1312,7 @@ button.dots__dot:hover { opacity: .65; }
   transform: translateX(-50%);
   width: auto;
   display: flex; gap: 22px;
+  white-space: nowrap;                        /* three items now: 308 wide, 286 on the phone */
   font-size: 12px; line-height: 17px;
   color: var(--blue-bright);                  /* #328195 in the frame, not white */
 }
@@ -1268,7 +1320,7 @@ button.dots__dot:hover { opacity: .65; }
 .join__footer a { color: inherit; }
 .join__footer a:hover { color: var(--gold); }
 
-/* The iPhone frame tightens the pair to 11 (164 wide, not 175). */
+/* The iPhone frame tightens the gaps to 11. */
 @media (max-width: 759.98px) {
   .join__footer { gap: 11px; bottom: 11.5px; }   /* 785.5 + 17 of 814 */
 }

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Grail — Own the best cards</title>
-<meta name="description" content="We love collecting, and we want everyone to be able to own the best cards around. That's why we're building Grail.">
+<meta name="description" content="We love collecting, and we want everyone to be able to own the best cards around. That's why we built Grail.">
 <meta name="theme-color" content="#000000">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon2x.png">
 <link rel="apple-touch-icon" href="assets/img/favicon2x.png">
 
-<link rel="stylesheet" href="css/style.css?v=64">
+<link rel="stylesheet" href="css/style.css?v=73">
 
 <link rel="preload" as="image" href="assets/img/phone-frame.png" fetchpriority="high">
 <link rel="preload" as="image" href="assets/img/logo.svg">
@@ -45,6 +45,12 @@
          on the "Open Grail University" button in slide 7. -->
     <a class="chrome__link chrome__link--uni" href="#" data-todo-link="grail-university">Grail University<span class="chrome__arr" aria-hidden="true">↗</span></a>
   </nav>
+
+  <!-- TODO(link): Log in has no destination yet — the Figma button carries no
+       hyperlink and there is no login page. Left inert, like Grail University. -->
+  <a class="btn btn--m btn--ghost" data-todo-link="log-in">
+    <span class="btn__t">Log in</span>
+  </a>
 
   <a class="btn btn--m" href="#s9">
     <span class="btn__t">Sign up</span>
@@ -89,11 +95,11 @@
 
           <div class="split__body">
             <p class="body">We love collecting, and we want everyone to be able to own the
-              <span class="gold">best cards</span> around. That&rsquo;s why we&rsquo;re building Grail.</p>
+              <span class="gold">best cards</span> around. That&rsquo;s why we built Grail.</p>
 
             <div class="hero__actions">
               <a class="btn btn--l btn--gold btn--tilt-l" href="#s9">
-                <span class="btn__t">Get early access</span>
+                <span class="btn__t">Join now</span>
                 <svg class="btn__fold" viewBox="0 0 15 15" fill="none" aria-hidden="true" focusable="false">
                   <path d="M0 2H13V15L0 2Z" fill="url(#fold-1)"></path>
                   <path d="M0 1L10 1C12.2091 1 14 2.79086 14 5V15" stroke="#000" stroke-width="2"></path>
@@ -168,7 +174,7 @@
               <h2 class="display gold">gems<img class="split__art gems__icon" data-src="assets/img/gem2x.png" alt="" width="58" height="58" decoding="async"></h2>
                           </div>
             <div class="split__body">
-              <p class="body">Each season, we release a host of world-class cards into chests, ready for our users to find. Each card is <span class="gold">split into gems</span>, allowing you to own a part of these iconic cards, along with other members of the community.</p>
+              <p class="body">Each season, we release a host of world-class cards into chests, ready for our users to find. Each card is <span class="gold">split into gems</span>, allowing you to own part of these iconic cards with other members of the community.</p>
             </div>
           </div>
         </div>
@@ -176,7 +182,7 @@
         <div class="split__col split__col--r">
         <div class="phone phone--gems" data-reveal>
           <div class="phone__screen">
-            <img class="phone__layer" data-src="assets/img/gems-collect.jpg" alt="The Grail app showing a collection of gems" width="804" height="1748" decoding="async">
+            <img class="phone__layer" data-src="assets/img/gems-collect.webp" alt="The Grail app showing a collection of gems" width="804" height="1748" decoding="async">
           </div>
           <div class="phone__frame">
             <img data-src="assets/img/phone-frame-grey.png" alt="" width="1234" height="2484" decoding="async">
@@ -207,9 +213,13 @@
         </div>
 
         <div class="split__col split__col--r">
-        <div class="avatar__art" data-reveal>
-          <img data-src="assets/img/avatar-card-full.png" alt="A Grail avatar in a USA jersey and yellow beanie, framed by a zebra-print card"
-               width="1288" height="2099" decoding="async">
+        <div class="avatar__art fade-cycle" data-reveal>
+          <img data-src="assets/img/avatar-card-1.webp" alt="A Grail avatar in a USA jersey and yellow beanie, framed by a zebra-print card"
+               width="1289" height="2100" decoding="async">
+          <img data-src="assets/img/avatar-card-2.webp" alt="A Grail avatar with a halo and baseball shirt, framed by a vine-covered card"
+               width="1289" height="2100" decoding="async">
+          <img data-src="assets/img/avatar-card-3.webp" alt="A Grail avatar in a leather jacket and fedora, framed by a brick card"
+               width="1289" height="2100" decoding="async">
         </div>
         </div>
 
@@ -259,14 +269,24 @@
         <div class="split__col split__col--l">
           <div class="split__copy" data-reveal>
             <div class="split__heading">
-              <p class="h2 season__l1">Cards Are Distributed at the End of</p>
-              <!-- The dice sits in place of the O, so the letterform itself drops out —
-                   same treatment as the "o" in HOBBY on slide 7. -->
-              <h2 class="display gold">Seas<span class="letter-out">o</span>n<img class="split__art season__dice" data-src="assets/img/dice2x.png" alt="" width="120" height="135" decoding="async"></h2>
+              <p class="h2 season__l1">All Cards Are Distributed at the End of the</p>
+              <!-- The gem sits in place of the O, so the letterform itself drops out —
+                   same treatment as the "o" in HOBBY on slide 7. It cycles through
+                   the six Gems variants; Mythic is first so a reduced-motion
+                   viewer sees the same gem the Figma frame shows. -->
+              <h2 class="display gold">Seas<span class="letter-out">o</span>n<span class="split__art season__gem fade-cycle fade-cycle--6" aria-hidden="true">
+                <img data-src="assets/img/gem-mythic.svg" alt="" width="60" height="60" decoding="async">
+                <img data-src="assets/img/gem-holygrail.svg" alt="" width="60" height="60" decoding="async">
+                <img data-src="assets/img/gem-illustrious.svg" alt="" width="60" height="60" decoding="async">
+                <img data-src="assets/img/gem-storied.svg" alt="" width="60" height="60" decoding="async">
+                <img data-src="assets/img/gem-renowned.svg" alt="" width="60" height="60" decoding="async">
+                <img data-src="assets/img/gem-notable.svg" alt="" width="60" height="60" decoding="async">
+              </span></h2>
                           </div>
             <div class="split__body">
-              <p class="body">At the end of each season, each gem holder votes on what they&rsquo;d like to do with their card. If holders choose Randomise, one lucky gem holder takes <span class="gold">full ownership</span>.</p>
-              <p class="body">If Auction is chosen, we sell the card with one of our auction partners and transfer all proceeds to the gem holders. We then start the next season, with a whole new host of world-class cards.</p>
+              <p class="body">At the end of each season, each gem holder votes on what they&rsquo;d like to do with their card. If holders choose Randomise, one lucky gem holder takes <span class="gold">full ownership</span> of the card.</p>
+              <p class="body">If Auction is chosen, we sell the card with one of our auction partners and transfer all proceeds to the gem holders.</p>
+              <p class="body">We then start the next season, with a whole new host of world-class cards.</p>
             </div>
           </div>
         </div>
@@ -294,7 +314,7 @@
               <p class="h2">With Grail University</p>
                           </div>
             <div class="split__body">
-              <p class="body">&ldquo;<span class="gold">Knowledge is power</span>&rdquo; as the old adage goes, and we believe that nowhere is this saying more true than in collecting. We&rsquo;ve put together bespoke, free learning to help you get the most out of your hobby, whether you take it casually, or seriously.</p>
+              <p class="body">&ldquo;<span class="gold">Knowledge is power</span>&rdquo; as the old adage goes, and we believe that this saying is especially true in collecting. We&rsquo;ve put together bespoke, free learning to help you get the most out of your hobby, whether you take it casually or seriously.</p>
               <!-- TODO(link): same pending destination as the header's Grail
                    University link — see the note in the page header. No href
                    until then, so it is inert rather than a dead anchor. -->
@@ -449,7 +469,8 @@
            so it is a sibling of the card, not a child of it. -->
       <p class="join__footer">
         <span>&copy; 2026 Grail</span>
-        <a href="#">Privacy Policy</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
       </p>
     </div>
   </section>
@@ -493,6 +514,6 @@
 
 <!-- ?v= is a cache buster: bump it whenever you FTP a new css/js up,
      or browsers keep serving the old file. -->
-<script src="js/main.js?v=64" defer></script>
+<script src="js/main.js?v=78" defer></script>
 </body>
 </html>

@@ -1,0 +1,122 @@
+/* ============================================================
+   Legal pages — Terms & Conditions, Privacy Policy
+   One template, built from the three Figma frames:
+     Terms & Conditions — Desktop  (1680, component 216:9200)
+     Terms & Conditions — Tablet   (834,  216:9538)
+     Terms & Conditions — Mobile   (402,  220:7849)
+   Loads after style.css and reuses its chrome, buttons and tokens.
+   Fixed px per breakpoint, like the deck: the card flexes with the window,
+   the type does not.
+   ============================================================ */
+
+/* A normal scrolling page — the deck's scroll lock is keyed on html.js,
+   which these pages never set. The chrome scrolls away with the page: in
+   the frames it sits over the card's top edge, not over the copy. */
+.doc .chrome { position: absolute; }
+
+/* Tablet frames of the deck carry Sign up alone, but the legal Tablet frame
+   has the full desktop header — Log in included, same positions. */
+@media (min-width: 760px) and (max-width: 1365.98px) {
+  .doc .chrome .btn--ghost { display: inline-flex; right: 115.13px; top: 20px; transform: rotate(-1.5deg); }
+  .doc .chrome .btn--ghost:hover { transform: rotate(-1.5deg) translate(1px, -2px); }
+  .doc .chrome .btn--m:not(.btn--ghost) { right: 20.56px; }
+}
+
+/* ── Page: 40 top, card, 40px footer — exactly the frame's stack ── */
+.doc-page {
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: 40px;
+}
+
+/* The card: 40 in from each side, r40, 120 top and bottom.
+   Figma blends its gradient in straight alpha, so navy (a1) to gold (a0)
+   passes through a warm brown on the way out. CSS blends premultiplied —
+   the same two stops would just fade navy away with no gold at all — so
+   the second half is laid down as ten stops sampled from Figma's straight
+   blend, and the browser only has to bridge 5% at a time. */
+.doc-card {
+  width: calc(100% - 80px);
+  border-radius: 40px;
+  overflow: hidden;
+  padding: 120px 0;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 64px;
+  background: linear-gradient(180deg,
+    rgba(32, 76, 104, 0)    0%,
+    rgba(32, 76, 104, 1)   50%,
+    rgba(51, 87, 106, .9)  55%,
+    rgba(70, 97, 107, .8)  60%,
+    rgba(90, 108, 109, .7) 65%,
+    rgba(109, 118, 110, .6) 70%,
+    rgba(128, 129, 112, .5) 75%,
+    rgba(147, 140, 114, .4) 80%,
+    rgba(166, 150, 115, .3) 85%,
+    rgba(186, 161, 117, .2) 90%,
+    rgba(205, 171, 118, .1) 95%,
+    rgba(224, 182, 120, 0) 100%);
+}
+
+/* Lockup: the slide pattern — small white line over the big gold word */
+.doc-head { display: flex; flex-direction: column; align-items: center; margin: 0; font-weight: 400; }
+.doc-head__small { font-size: 48px; line-height: 50px; font-weight: 500; color: var(--text); }
+.doc-head__big {
+  font-size: 144px; line-height: 150px;
+  font-weight: 600; font-style: italic; text-transform: uppercase;
+  color: var(--gold); white-space: nowrap;
+}
+
+/* The 640 column. On the Tablet frame it is still 640 inside a 754 card —
+   wider than the 100px side padding allows — so the column, not padding,
+   sets the measure; max-width only keeps 20px clear on narrow tablets. */
+.doc-intro, .doc-content { width: 640px; max-width: calc(100% - 40px); }
+
+.doc-intro { display: flex; flex-direction: column; gap: 16px; text-align: center; }
+.doc-intro p { margin: 0; font-size: 18px; line-height: 26px; font-weight: 500; color: var(--text); }
+.doc-intro .doc-date { font-size: 16px; line-height: 23px; font-weight: 400; color: rgba(255, 255, 255, .46); }
+
+.doc-content { display: flex; flex-direction: column; gap: 40px; }
+.doc-section { display: flex; flex-direction: column; gap: 12px; }
+.doc-section h2 {
+  margin: 0;
+  font-size: 26px; line-height: 28px; font-weight: 400; font-style: italic;
+  color: var(--gold);
+}
+.doc-section p { margin: 0; font-size: 18px; line-height: 26px; font-weight: 500; color: var(--text); }
+
+/* Footer — the deck's footer, in flow under the card instead of pinned.
+   The page you are on is italic gold, like the active header link. */
+.doc-footer {
+  display: flex; gap: 22px;
+  padding: 11.5px 0; margin: 0;
+  white-space: nowrap;
+  font-size: 12px; line-height: 17px;
+  color: var(--blue-bright);
+}
+.doc-footer span { font-style: italic; }
+.doc-footer a { color: inherit; }
+.doc-footer a:hover { color: var(--gold); }
+.doc-footer a[aria-current="page"] { color: var(--gold); font-style: italic; }
+
+/* ── Tablet: 754 card in 834, the mobile lockup (28/32 + 72/75, −2 gap) ── */
+@media (max-width: 1365.98px) {
+  .doc-card { gap: 40px; }
+  .doc-head__small { font-size: 28px; line-height: 32px; }
+  .doc-head__big { font-size: 72px; line-height: 75px; margin-top: -2px; }
+}
+
+/* ── Mobile: 362 card in 402, r20, 70/20 padding, 14/22 body ── */
+@media (max-width: 759.98px) {
+  .doc-page { padding-top: 20px; padding-bottom: 10px; gap: 10px; }
+  .doc-card { width: calc(100% - 40px); border-radius: 20px; padding: 70px 20px; gap: 40px; }
+  /* CONDITIONS at the deck's 72 is 458 wide; 48/50 is the largest that
+     fits the 322 column. */
+  .doc-head__big { font-size: 48px; line-height: 50px; }
+  .doc-intro, .doc-content { width: 100%; max-width: none; }
+  .doc-intro { gap: 12px; }
+  .doc-intro p { font-size: 14px; line-height: 22px; }
+  .doc-intro .doc-date { font-size: 14px; line-height: 20px; }
+  .doc-content { gap: 32px; }
+  .doc-section { gap: 8px; }
+  .doc-section p { font-size: 14px; line-height: 22px; }
+  .doc-footer { gap: 11px; padding: 1.5px 0; }
+}
