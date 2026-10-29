@@ -155,8 +155,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .btn--tilt-l { transform: rotate(-2deg); }
 .btn--tilt-r { transform: rotate(1deg); }
 .btn:hover { filter: drop-shadow(-3px 3px 0 rgba(0, 0, 0, .22)); }
-.btn--tilt-l:hover { transform: rotate(-2deg) translate(1px, -2px); }
-.btn--tilt-r:hover { transform: rotate(1deg) translate(1px, -2px); }
+/* On hover the tilted stickers straighten up, like the untilted ones */
+.btn--tilt-l:hover, .btn--tilt-r:hover { transform: rotate(0deg) translate(1px, -2px); }
 .btn:not(.btn--tilt-l):not(.btn--tilt-r):hover { transform: translate(1px, -2px); }
 .btn:active { filter: drop-shadow(-1px 1px 0 rgba(0, 0, 0, .22)); }
 
